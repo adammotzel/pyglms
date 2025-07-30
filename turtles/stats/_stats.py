@@ -269,8 +269,8 @@ def pca(X: np.ndarray, p: int) -> np.ndarray:
     # calculate eigenvalues, eigenvectors
     s, w = eigs(C, p)
     s = s.real
-    s = np.reshape(s, newshape=(p, 1))
+    s = np.reshape(s, (p, 1))
     w = w.real
-    pca = w.T @ X_c/np.sqrt(s)
+    pca = w.T @ X_c
 
     return pca.T
