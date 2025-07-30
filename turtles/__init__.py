@@ -2,7 +2,7 @@
 Configure global settings for package.
 """
 
-__version__ = "0.1.0"
+__version__ = "0.1.1"
 
 # modules
 __all__ = [
