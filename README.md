@@ -1,3 +1,6 @@
+![coverage](https://img.shields.io/badge/coverage-90%25-brightgreen)
+
+
 # PyGLMs
 
 An implementation of various Generalized Linear Models (GLMs), written in Python.
@@ -58,4 +61,14 @@ To add more GLM classes, use the `GLM` parent class for inheritence (see `Poisso
 
 ## Testing
 
-All tests are contained within `tests` directories for each module. You can simply execute the `pytest` command in a terminal from project root to run all unit tests.
+All tests are contained within `tests` directories for each module. You can simply execute the `pytest` command to run all unit tests.
+
+```bash
+pytest turtles
+```
+
+You can also generate a test coverage report.
+
+```bash
+pytest --cov=turtles --cov-report=term-missing --cov-config=.coveragerc -p no:warnings
+```

@@ -1,0 +1,8 @@
+[run]
+source = turtles
+branch = True
+
+[report]
+omit =
+    */test_*.py
+    

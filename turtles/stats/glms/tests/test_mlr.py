@@ -4,13 +4,14 @@ Test MLR class by comparing results to `statsmodels`.
 https://www.statsmodels.org/dev/generated/statsmodels.regression.linear_model.OLS.html
 
 These tests essentially treat the `statsmodels` results as 'ground truth'. This is 
-just a simply way of ensuring the MLR class calculates the core model results 
+just a simple way of ensuring the MLR class calculates the core model results 
 correctly.
 """
 
 import numpy as np
-from sklearn.datasets import load_diabetes
 import statsmodels.api as sm
+from sklearn.datasets import load_diabetes
+from scipy.stats import t
 
 from turtles.stats.glms import MLR
 
@@ -36,29 +37,101 @@ X = sm.add_constant(X)
 sm_model = sm.OLS(y, X).fit()
 sm_preds = sm_model.predict(X)
 
+# calculate critical t-value
+# SM OLS models don't offer this property
+sm_critical_t = t.ppf(1 - 0.05/2, sm_model.df_resid)
+
 
 def test_mlr():
     """
     Test model statistics.
 
         1. Number of Observations
-        2. Degrees of Freedom (residuals)
-        3. Estimated Coefficients, i.e., Betas
-        4. Mean Squared Error (residuals)
-        5. Estimated Coefficient P-values
-        6. Model R-squared
-        7. Model Adjusted R-dquared
-        8. Estimated Coefficient t-stats
-        9. Estimated Coefficient Standard Errors
-        10. Model predictions (to ensure .predict() works)
+        2. Number of Dimensions
+        3. Degrees of Freedom (residuals)
+        4. Intercept
+        5. Estimated Coefficients, i.e., Betas
+        6. Residuals
+        7. Variance
+        8. RSS
+        9. RMSE
+        10. Standardized Residuals
+        11. Covariance Matrix
+        12. Critical t-value
+        13. Confidence Intervals
+        14. SST
+        15. Mean Squared Error (residuals)
+        16. Estimated Coefficient P-values
+        17. Model R-squared
+        18. Model Adjusted R-dquared
+        19. Estimated Coefficient t-stats
+        20. Estimated Coefficient Standard Errors
+        21. Model predictions (to ensure .predict() works)
     """
 
     assert all([col in summary["Variable"].unique() for col in var_names])
     assert model.observations == sm_model.nobs
+    assert model.dimensions == X.shape[1] - 1
     assert model.degrees_of_freedom == sm_model.df_resid
+
+    np.isclose(
+        model.intercept,
+        sm_model.params[0],
+        atol=tol
+    )
     np.isclose(
         model.betas[0],
         sm_model.params,
+        atol=tol
+    )
+    np.isclose(
+        model.residuals,
+        sm_model.resid,
+        atol=tol
+    )
+    np.isclose(
+        model.variance,
+        sm_model.scale,
+        atol=tol
+    )
+    np.isclose(
+        model.rss,
+        sm_model.ssr,
+        atol=tol
+    )
+    np.isclose(
+        model.rmse,
+        np.sqrt(sm_model.mse_resid),
+        atol=tol
+    )
+    np.isclose(
+        model.std_residuals,
+        sm_model.resid_pearson,
+        atol=tol
+    )
+    np.isclose(
+        model.covariance,
+        sm_model.cov_HC1,
+        atol=tol
+    )
+    np.isclose(
+        model.critical_t,
+        sm_critical_t,
+        atol=tol
+    )
+    np.isclose(
+        model.confidence_interval[0][0],
+        sm_model.conf_int()[:,0],
+        atol=tol
+    )
+    np.isclose(
+        model.confidence_interval[1][0],
+        sm_model.conf_int()[:,1],
+        atol=tol
+    )
+    np.isclose(
+        model.sst,
+        sm_model.centered_tss,
         atol=tol
     )
     np.testing.assert_approx_equal(
