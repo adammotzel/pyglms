@@ -217,7 +217,7 @@ class GLM:
         betas: np.ndarray, 
         X: np.ndarray, 
         y: np.ndarray
-    ) -> float:
+    ) -> float:  # pragma: no cover
         """
         Compute the negative log-likelihood for the GLM. This is the objective 
         function we want to minimize in the scipy L-BFGS solver.
@@ -231,7 +231,7 @@ class GLM:
         """
         pass
         
-    def _link_func(self, y: np.ndarray) -> np.ndarray:
+    def _link_func(self, y: np.ndarray) -> np.ndarray:  # pragma: no cover
         """
         Link function for the GLM child class. 
         
@@ -244,7 +244,7 @@ class GLM:
         betas: np.ndarray,
         X: np.ndarray, 
         y: np.ndarray
-    ) -> np.ndarray:
+    ) -> np.ndarray:  # pragma: no cover
         """
         Gradient calculation function for the GLM child class (i.e., the first derivative 
         of the loss function with respect to the model parameters).
@@ -258,7 +258,7 @@ class GLM:
         """
         pass
 
-    def _hess_func(self, X: np.ndarray) -> np.ndarray:
+    def _hess_func(self, X: np.ndarray) -> np.ndarray:  # pragma: no cover
         """
         Hessian calculation function for the GLM child class (i.e., the second derivative 
         of the loss function with respect to the model parameters). 

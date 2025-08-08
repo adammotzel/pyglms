@@ -417,7 +417,7 @@ class MLR:
         }
         return pd.DataFrame(stats).round(4)
     
-    def plot_residuals_hist(self, bins: Optional[int] = 20):
+    def plot_residuals_hist(self, bins: Optional[int] = 20):  # pragma: no cover
         """
         A simple histogram plot of the residuals. Useful for checking
         the Normality assumption.
@@ -455,7 +455,7 @@ class MLR:
             x: np.ndarray, 
             title: Optional[str] = "Residuals vs. Independent",
             xlabel: Optional[str] = "Independent"
-        ):
+        ):  # pragma: no cover
         """
         Plot standardized residuals against an independent variable. 
         Useful for checking the Linearity assumption.
@@ -490,7 +490,7 @@ class MLR:
             self, 
             title: Optional[str] = "Residuals vs. Fitted Values",
             xlabel: Optional[str] = "Fitted Values"
-        ):
+        ):  # pragma: no cover
         """
         Plot standardized residuals against fitted values. Useful for checking
         the Constant Variance and Uncorrelated Errors assumptions.
@@ -519,7 +519,7 @@ class MLR:
             ylabel="Residuals"
         )
 
-    def qq_plot(self):
+    def qq_plot(self):  # pragma: no cover
         """
         Generate a QQ Plot using the standardized residuals. Useful
         for checking the Normality assumption.
