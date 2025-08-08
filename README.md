@@ -1,4 +1,4 @@
-![coverage](https://img.shields.io/badge/coverage-90%25-brightgreen)
+![coverage](https://img.shields.io/badge/coverage-93%25-brightgreen)
 
 
 # PyGLMs
@@ -67,6 +67,7 @@ All tests are contained within `tests` directories for each module. You can simp
 pytest turtles
 ```
 
+
 ### Test Coverage
 
 You can also generate a test coverage report.
@@ -75,7 +76,7 @@ You can also generate a test coverage report.
 pytest --cov=turtles --cov-report=term-missing --cov-config=.coveragerc -p no:warnings
 ```
 
-**Notes:**
+**Notes on Test Coverage:**
 - Plotting functions from `turtles.plotting` are tested, but plotting methods in GLM classes 
 (like `MLR`) are ignored. Those class methods are essentially just wrappers around `matplotlib` 
 and `turtles.plotting` functions.
