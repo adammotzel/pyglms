@@ -1,4 +1,4 @@
-![coverage](https://img.shields.io/badge/coverage-93%25-brightgreen)
+![coverage](https://img.shields.io/badge/coverage-94%25-brightgreen)
 
 
 # PyGLMs
@@ -52,6 +52,8 @@ Install dependencies:
 pip install -r requirements-dev.txt
 ```
 **NOTE**: `requirements-dev.txt` contains the dev dependencies, some of which are not part of the packaged distribution. It also includes the `turtles` package in editable mode. See the `pyproject.toml` file for true package dependencies.
+
+Optionally, you can execute `scripts/env.sh` to create and activate the virtual environment using `uv`. The `uv`package manager must be installed for this to work.
 
 
 ### Adding GLMs
