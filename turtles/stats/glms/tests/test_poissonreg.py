@@ -71,6 +71,8 @@ def test_poissonreg():
         5. Estimated Coefficient Standard Errors
         6. Estimated Coefficient z-stats
         7. Model predictions (to ensure .predict() works)
+        8. Model Deviance
+        9. Model Dispersion
     """
 
     assert all([col in summary["Variable"].unique() for col in var_names])
@@ -99,6 +101,16 @@ def test_poissonreg():
     np.isclose(
         preds,
         sm_preds,
+        atol=tol
+    )
+    np.isclose(
+        model.deviance,
+        sm_model.deviance,
+        atol=tol
+    )
+    np.isclose(
+        model.dispersion,
+        sm_model.deviance / sm_model.df_resid,
         atol=tol
     )
 
