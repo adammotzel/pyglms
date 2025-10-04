@@ -1,4 +1,4 @@
-![coverage](https://img.shields.io/badge/coverage-93%25-brightgreen)
+![coverage](https://img.shields.io/badge/coverage-94%25-brightgreen)
 
 
 # PyGLMs
