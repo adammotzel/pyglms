@@ -10,6 +10,7 @@ else
     echo "Could not find the activation script for the virtual environment."
 fi
 
+uv pip install . 
 uv pip install -r requirements-dev.txt
 
 echo ""
