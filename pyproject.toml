@@ -16,8 +16,12 @@ dependencies = [
 description = "GLMs in Python."
 readme = "README.md"
 license = {file = "LICENSE.txt"}
-classifiers = ["Programming Language :: Python :: 3.12"]
-
+classifiers = [
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+]
 authors = [
     {name = "Adam Motzel", email = "motzel.adam@gmail.com"}
 ]
