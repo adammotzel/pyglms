@@ -24,4 +24,4 @@ authors = [
 
 [tool.setuptools.packages.find]
 where = ["."]
-exclude = ["tests", "*tests*", "examples"]
+exclude = ["tests", "*tests*", "examples", "scripts"]
