@@ -33,7 +33,7 @@ See `examples/{class name}_example.ipynb` for simple examples of using each mode
 
 ## Contributing
 
-To run (and edit) this project locally, clone the repo and create your virtual environment from project root using your global (or local) Python version. This project requires Python 3.9+.
+To run (and edit) this project locally, clone the repo and create your virtual environment from project root using your global (or local) Python version. This project requires Python 3.10+.
 
 ```bash
 python -m venv venv
