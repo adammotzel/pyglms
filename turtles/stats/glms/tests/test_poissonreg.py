@@ -10,6 +10,7 @@ correctly.
 
 import statsmodels.api as sm
 import numpy as np
+import pandas as pd
 from sklearn.datasets import fetch_openml
 
 from turtles.stats.glms import PoissonReg
@@ -21,8 +22,7 @@ tol = 1e-4
 prec = 4
 
 # get insurance claims data (cut the dataset for simplicity)
-df = fetch_openml(data_id=41214, as_frame=True).frame
-df = df.iloc[:5000]
+df = pd.read_csv("data/poisson_test_data.csv")
 df = df[["ClaimNb", "Exposure", "Area", "VehBrand"]].copy()
 df_enc = one_hot_encode(df, ["Area", "VehBrand"])
 
@@ -113,8 +113,3 @@ def test_poissonreg():
         sm_model.deviance / sm_model.df_resid,
         atol=tol
     )
-
-
-if __name__ == "__main__":
-    test_poissonreg()
-    print("All tests passed.")

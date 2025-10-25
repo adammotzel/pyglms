@@ -80,8 +80,3 @@ def test_logreg():
         sm_preds,
         atol=tol
     )
-
-
-if __name__ == "__main__":
-    test_logreg()
-    print("All tests passed.")

@@ -1,0 +1,5 @@
+Poisson test data source: https://www.openml.org/search?type=data&sort=runs&id=41214&status=active
+
+A local subset of this dataset is saved in the repository for testing. The GitHub 
+CI workflow has trouble fetching this dataset from the OpenML website, for some 
+unknown reason.
