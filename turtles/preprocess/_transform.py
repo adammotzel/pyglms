@@ -41,18 +41,18 @@ def one_hot_encode(
         category will then be treated as the 'base case' or 'reference category' 
         for model coefficient interpretation.
     return_df : bool, default True
-        Optionally return a pandas DataFrame. If False, a Tuple of a numpy matrix 
-        and resulting column names is returned.
+        Optionally return a pandas DataFrame. If False, a Tuple of a numpy 
+        matrix and resulting column names is returned.
 
     Returns
     -------
     Union[pd.DataFrame, Tuple[np.ndarray, List[str]]]
     
-        If `return_df` = True, a pandas DataFrame is returned, containing the encoded 
-        columns.
+        If `return_df` = True, a pandas DataFrame is returned, containing the 
+        encoded columns.
         
-        If `return_df` = False, a Tuple is returned, where the new matrix is in position [0] 
-        and the list of new column names in position [1].
+        If `return_df` = False, a Tuple is returned, where the new matrix is 
+        in position [0] and the list of new column names in position [1].
     """
     
     _validate_args(

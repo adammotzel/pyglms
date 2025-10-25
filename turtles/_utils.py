@@ -34,7 +34,9 @@ def _shape_check(x: np.ndarray, var_name: str, dim: int = 1):
     """
 
     if np.ndim(x) == 1 or x.shape[1] < dim:
-        raise ValueError(f"'{var_name}' must contain more than {dim} dimensions.")
+        raise ValueError(
+            f"'{var_name}' must contain more than {dim} dimensions."
+        )
     
 
 def _validate_args(
@@ -46,7 +48,8 @@ def _validate_args(
     Parameters
     ----------
     map : Dict[str, Tuple[Any, Union[type, Tuple[type, ...]]]]
-        A dictionary where keys are the argument names and the values are tuples containing:
+        A dictionary where keys are the argument names and the values are 
+        tuples containing:
         - the object to check
         - the expected type or a tuple of types
 

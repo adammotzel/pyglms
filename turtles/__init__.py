@@ -2,7 +2,12 @@
 Configure global settings for package.
 """
 
-__version__ = "1.0.0"
+from importlib.metadata import version, PackageNotFoundError
+
+try:
+    __version__ = version("turtles")
+except PackageNotFoundError:
+    __version__ = "0.0.0"
 
 # modules
 __all__ = [

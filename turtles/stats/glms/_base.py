@@ -15,50 +15,53 @@ These are:
        of input variables and coefficients to produce the expected response. In 
        Logistic Regression, for example, this would be the sigmoid function.
 
-    2. `_grad_func(self)`: The Gradient (first derivative) of the GLMs loss function 
-       used during model fitting.
+    2. `_grad_func(self)`: The Gradient (first derivative) of the GLMs loss 
+       function used during model fitting.
 
-    3. `_hess_func(self)`: The Hessian (second derivative) of the GLMs loss function 
-       used during model fitting in second-order optimization methods.
+    3. `_hess_func(self)`: The Hessian (second derivative) of the GLMs loss 
+       function used during model fitting in second-order optimization methods.
 
-    4. `_objective_func(self)`: The objective function we want to minimize when optimizing. 
-       This function is used by the scipy L-BFGS solver. The first derivative of this function 
-       is the Gradient, and the second derivative is the Hessian.
+    4. `_objective_func(self)`: The objective function we want to minimize when 
+       optimizing. This function is used by the scipy L-BFGS solver. The first 
+       derivative of this function is the Gradient, and the second derivative 
+       is the Hessian.
 
-Each of these must be implemented separately, because the optimization procedure differs 
-between GLMs since they have different loss functions. Different loss functions means different 
-derivatives, different distributions, etc.
+Each of these must be implemented separately, because the optimization procedure 
+differs between GLMs since they have different loss functions. Different loss 
+functions means different derivatives, different distributions, etc.
 
-The other functions implemented in this class are common across child classes. As 
-previously mentioned, they can be overwritten by the child class if needed.
+The other functions implemented in this class are common across child classes. 
+As previously mentioned, they can be overwritten by the child class if needed.
 
-    1. `_is_fit(self)`: Checks if the model has been fit. This is used to control access 
-       to instance attributes and methods the require the model first be fit.
+    1. `_is_fit(self)`: Checks if the model has been fit. This is used to control 
+       access to instance attributes and methods the require the model first be 
+       fit.
 
-    2. `_get_hessian_inv(self)`: Computes the inverse of a Hessian matrix. This is a simple 
-       linear algebra operation with a try/except construct.
+    2. `_get_hessian_inv(self)`: Computes the inverse of a Hessian matrix. This 
+       is a simple linear algebra operation with a try/except construct.
 
-    3. `_optimization(self)`: Implements the optimization algorithm using the child class 
-       implementation of the derivative methods and objective function.
+    3. `_optimization(self)`: Implements the optimization algorithm using the 
+       child class implementation of the derivative methods and objective function.
 
-    4. `_get_coef_stats(self)`:`: Calculates basic stats for coefficients from model fitting, 
-       such as std errors, p-values, confidence intervals, etc.
+    4. `_get_coef_stats(self)`:`: Calculates basic stats for coefficients from 
+       model fitting, such as std errors, p-values, confidence intervals, etc.
 
-    5. `_get_std_errors(self)`: Calculates std errors for model coefficients using the Coveriance 
-       matrix (inverse Hessian).
+    5. `_get_std_errors(self)`: Calculates std errors for model coefficients using 
+       the Coveriance matrix (inverse Hessian).
 
-    6. `fit(self)`: Fits the child class instance using the input `method` for optimization. 
-       Also computes the model coefficient statistics.
+    6. `fit(self)`: Fits the child class instance using the input `method` for 
+       optimization. Also computes the model coefficient statistics.
 
-    7. `predict(self)`: Predict outcome(s) using a linear combination of input variables and 
-       the fitted model coefficients. Uses the child classes link function to produce the 
-       appropriate response.
+    7. `predict(self)`: Predict outcome(s) using a linear combination of input 
+       variables and the fitted model coefficients. Uses the child classes link 
+       function to produce the appropriate response.
 
-    8. `summary(self)`: Produces a summary table for the model after fitting. Displays 
-       the estimated model coefficients and their statistics.
+    8. `summary(self)`: Produces a summary table for the model after fitting. 
+       Displays the estimated model coefficients and their statistics.
 
-Child classes can contain as many additional class methods, instance methods, instance 
-attributes, etc. as needed, as long as they don't conlfict with what's described above.
+Child classes can contain as many additional class methods, instance methods, 
+instance attributes, etc. as needed, as long as they don't conlfict with what's 
+described above.
 """
 
 from typing import (
@@ -77,14 +80,16 @@ from ..._utils import (
     _validate_args,
     _add_intercept
 )
-from ._validation import _validate_init
+
+_supported_methods = ["newton", "grad", "lbfgs"]
 
 
 class GLM:
     """
     Parent class for GLM implementations.
 
-    Class Attributes and Methods are described in each child class implementation.
+    Class Attributes and Methods are described in each child class 
+    implementation.
     """
 
     def __init__(
@@ -103,31 +108,61 @@ class GLM:
         max_iter : Optional[int], default=1000
             The maximum number of iterations for the fitting algorithm.
         learning_rate : Optional[float], default=0.1
-            The learning rate (step size) used to update the model parameters during 
-            the fitting algorithm. Only applicable for `grad` and `newton`.
+            The learning rate (step size) used to update the model parameters 
+            during the fitting algorithm. Only applicable for `grad` and `newton`.
         tolerance : float, default=0.000001
-            The tolerance for stopping the fitting algorithm when the change in model 
-            parameters is below this value. Only applicable for `grad` and `newton`.
+            The tolerance for stopping the fitting algorithm when the change in 
+            model parameters is below this value. Only applicable for `grad` 
+            and `newton`.
         beta_momentum : float, default=0.9
-            Momentum hyperparameter for the gradient descent update. Only used and required 
-            when method = 'grad'. A value of 0 is equivalent to standard gradient descent.
+            Momentum hyperparameter for the gradient descent update. Only used 
+            and required when method = 'grad'. A value of 0 is equivalent to 
+            standard gradient descent.
         method : Literal['newton', 'grad', 'lbfgs'], default 'lbfgs'.
-            Optimization method for fitting the model. Currently supported algorithms are:
-                - `grad`: Gradient Descent (first-order). Requires hyperparameter tuning 
-                  (`learning_rate`, `tolerance`, `beta_momentum`, `max_iter`).
-                - `newton`: Newton's Method (second-order). Requires hyperparameter tuning 
-                  (`learning_rate`, `tolerance`, `max_iter`).
-                - `lbfgs`: Low-memory Broyden-Fletcher-Goldfarb-Shanno algorithm (quasi-Newton). 
-                  Does not require hyperparameter tuning; only uses `max_iter`.
+            Optimization method for fitting the model. Currently supported algorithms 
+            are:
+                - `grad`: Gradient Descent (first-order). Requires hyperparameter 
+                  tuning (`learning_rate`, `tolerance`, `beta_momentum`, `max_iter`).
+                - `newton`: Newton's Method (second-order). Requires hyperparameter 
+                  tuning (`learning_rate`, `tolerance`, `max_iter`).
+                - `lbfgs`: Low-memory Broyden-Fletcher-Goldfarb-Shanno algorithm 
+                  (quasi-Newton). Does not require hyperparameter tuning; only uses 
+                  `max_iter`.
         """
 
-        _validate_init(
-            max_iter=max_iter, 
-            learning_rate=learning_rate, 
-            tolerance=tolerance, 
-            method=method, 
-            beta_momentum=beta_momentum
+        _validate_args(
+            {
+                "max_iter": (max_iter, int),
+                "learning_rate": (learning_rate, float),
+                "tolerance": (tolerance, float),
+                "method": (method, str),
+                "beta_momentum": (beta_momentum, (float, int)),
+            }
         )
+
+        # additional input checks
+        for args in [
+            ("max_iter", max_iter), 
+            ("learning_rate", learning_rate), 
+            ("tolerance", tolerance), 
+            ("beta_momentum", beta_momentum),
+        ]:
+            if args[0] == "tolerance" and (args[1] <= 0) and (args[1] >= 1):
+                raise ValueError(
+                    (
+                        f"tolerance must be greater than 0 and less than 1. "
+                        f"Received {args[1]}"
+                    )
+                )
+            elif args[1] <= 0 and args[0] != "beta_momentum":
+                raise ValueError(
+                    f"{args[0]} must be greater than 0. Recevied {args[1]}"
+                )
+
+        if method not in ["newton", "grad", "lbfgs"]:
+            raise ValueError(
+                f"method must be one of {_supported_methods}. Received {method}"
+            )
 
         self.max_iter = max_iter
         self.learning_rate = learning_rate
@@ -222,10 +257,11 @@ class GLM:
         Compute the negative log-likelihood for the GLM. This is the objective 
         function we want to minimize in the scipy L-BFGS solver.
 
-        The function parameters MUST be in the specified order: betas, X, y. These are 
-        ALWAYS required. The L-BFGS solver passes positional arguments to this function 
-        in this exact order. If the child class requires a parameter like exposure, it must 
-        be placed last to maintain the proper order.
+        The function parameters MUST be in the specified order: betas, X, y. 
+        These are ALWAYS required. The L-BFGS solver passes positional arguments 
+        to this function in this exact order. If the child class requires a 
+        parameter like exposure, it must be placed last to maintain the proper 
+        order.
 
         This instance method must be implemented in the child class.
         """
@@ -246,13 +282,14 @@ class GLM:
         y: np.ndarray
     ) -> np.ndarray:  # pragma: no cover
         """
-        Gradient calculation function for the GLM child class (i.e., the first derivative 
-        of the loss function with respect to the model parameters).
+        Gradient calculation function for the GLM child class (i.e., the first 
+        derivative of the loss function with respect to the model parameters).
 
-        The function parameters MUST be in the specified order: betas, X, y. These are 
-        ALWAYS required. The L-BFGS solver passes positional arguments to this function 
-        in this exact order. If the child class requires a parameter like exposure, it must 
-        be placed last to maintain the proper order.
+        The function parameters MUST be in the specified order: betas, X, y. 
+        These are ALWAYS required. The L-BFGS solver passes positional arguments 
+        to this function in this exact order. If the child class requires a 
+        parameter like exposure, it must be placed last to maintain the proper 
+        order.
         
         This instance method must be implemented in the child class.
         """
@@ -260,8 +297,8 @@ class GLM:
 
     def _hess_func(self, X: np.ndarray) -> np.ndarray:  # pragma: no cover
         """
-        Hessian calculation function for the GLM child class (i.e., the second derivative 
-        of the loss function with respect to the model parameters). 
+        Hessian calculation function for the GLM child class (i.e., the second 
+        derivative of the loss function with respect to the model parameters). 
         
         This instance method must be implemented in the child class.
         """
@@ -300,8 +337,8 @@ class GLM:
         ------
         Warning
             If the Hessian matrix is singular and the inverse cannot be computed. 
-            This may happen if the hyperparameters are not tuned properly, or multicollinearity 
-            exists.
+            This may happen if the hyperparameters are not tuned properly, or
+            multicollinearity exists.
 
         Returns
         -------
@@ -325,19 +362,20 @@ class GLM:
         ----------
         **kwargs
             X : np.ndarray, shape (M, N)
-                The input design matrix, where M is the number of samples and N is the 
-                number of features.
+                The input design matrix, where M is the number of samples and N 
+                is the number of features.
             y : np.ndarray, shape (M, 1)
                 The true target values for each sample in the dataset.
             exposure : Optional[np.ndarray], shape (M, 1)
-                The exposure values for each sample. Only applicable for GLMs that use 
-                exposure.
+                The exposure values for each sample. Only applicable for GLMs 
+                that use exposure.
 
         Returns
         -------
         None
         """
-        # send kwargs to child class _grad_func(), which may contain varying parameters
+        # send kwargs to child class _grad_func(), which may 
+        # contain varying parameters
         self._gradient = self._grad_func(self._betas, **kwargs)
         self._velocity = self.beta_momentum * self._velocity + \
             (1 - self.beta_momentum) * self._gradient
@@ -345,20 +383,20 @@ class GLM:
 
     def _newtons_method(self, **kwargs):
         """
-        Newtons Method for updating betas. Uses the child class implementation of 
-        the Gradient and Hessian, `_grad_func()` and `_hess_func()`.
+        Newtons Method for updating betas. Uses the child class implementation 
+        of the Gradient and Hessian, `_grad_func()` and `_hess_func()`.
 
         Parameters
         ----------
         **kwargs
             X : np.ndarray, shape (M, N)
-                The input design matrix, where M is the number of samples and N is the 
-                number of features.
+                The input design matrix, where M is the number of samples and 
+                N is the number of features.
             y : np.ndarray, shape (M, 1)
                 The true target values for each sample in the dataset.
             exposure : Optional[np.ndarray], shape (M, 1)
-                The exposure values for each sample. Only applicable for GLMs that use 
-                exposure.
+                The exposure values for each sample. Only applicable for GLMs 
+                that use exposure.
 
         Returns
         -------
@@ -374,15 +412,16 @@ class GLM:
         Performs optimization using the L-BFGS-B algorithm.
 
         This method uses the L-BFGS-B (Limited-memory Broyden-Fletcher-Goldfarb-
-        Shanno with Box constraints) algorithm from `scipy.optimize` to minimize an 
-        objective function and estimate the optimal coefficients.
+        Shanno with Box constraints) algorithm from `scipy.optimize` to minimize 
+        an objective function and estimate the optimal coefficients.
 
-        This method is good for large datasets, and since `scipy.optimize` is written 
-        in C, it converges quickly.
+        This method is good for large datasets because it typically converges 
+        quickly.
 
-        NOTE: The L-BFGS solver implements its own procedure internally; thus we set the 
-        `_iterations` and `_betas` attributes based on its results. We also mark the model 
-        as "fitted" to terminate the `_optimization()` method.
+        NOTE: The L-BFGS solver implements its own procedure internally; thus 
+        we set the `_iterations` and `_betas` attributes based on its results. 
+        We also mark the model as "fitted" to terminate the `_optimization()` 
+        method.
 
         https://docs.scipy.org/doc/scipy/reference/generated/scipy.optimize.fmin_l_bfgs_b.html
 
@@ -390,13 +429,14 @@ class GLM:
         ----------
         **kwargs
             X : np.ndarray, shape (M, N)
-                The input design matrix, where M is the number of samples and N is the 
+                The input design matrix, where M is the number of samples and 
+                N is the 
                 number of features.
             y : np.ndarray, shape (M, 1)
                 The true target values for each sample in the dataset.
             exposure : Optional[np.ndarray], shape (M, 1)
-                The exposure values for each sample. Only applicable for GLMs that use 
-                exposure.
+                The exposure values for each sample. Only applicable for GLMs 
+                that use exposure.
 
         Returns
         -------
@@ -427,23 +467,24 @@ class GLM:
         """
         Perform the specified algorithm to estimate model parameters.
 
-        This method iteratively updates the model parameters (betas) with the goal 
-        of minimizing the loss function. The process continues until convergence 
-        criteria are met: either the maximum number of iterations or a change in 
-        the betas below a specified tolerance.
+        This method iteratively updates the model parameters (betas) with the 
+        goal of minimizing the loss function. The process continues until 
+        convergence criteria are met: either the maximum number of iterations 
+        or a change in the betas below a specified tolerance.
 
-        The **kwargs passed to this function are passed to the appropriate algorithm 
-        function.
+        The **kwargs passed to this function are passed to the appropriate 
+        algorithm function.
 
-        NOTE: The L-BFGS solver implements its own procedure internally. We terminate 
-        the `_optimization()` function once its complete, using the `_fitted` attribute.
+        NOTE: The L-BFGS solver implements its own procedure internally. We 
+        terminate the `_optimization()` function once its complete, using the 
+        `_fitted` attribute.
 
         Parameters
         ----------
         **kwargs
             X : np.ndarray, shape (M, N)
-                The input design matrix, where M is the number of samples and N is the 
-                number of features.
+                The input design matrix, where M is the number of samples and 
+                N is the number of features.
             y : np.ndarray, shape (M, 1)
                 The true target values for each sample in the dataset.
 
@@ -468,7 +509,9 @@ class GLM:
             update_betas(**kwargs)
 
             # strict convergence check
-            if (np.max(np.abs(self._betas - prev_betas)) < self.tolerance) or self._fitted:
+            if (
+                np.max(np.abs(self._betas - prev_betas)
+            ) < self.tolerance) or self._fitted:
                 break
             
             self._iterations += 1
@@ -480,8 +523,8 @@ class GLM:
         Calculate the Standard Error for the estimated model coefficients.
 
         The Covariance Matrix is equal to the inverse of the Hessian matrix, 
-        and the Standard Errors of the estimated model coefficients are equal to 
-        the square root of the Covariance Matrix diagonals.
+        and the Standard Errors of the estimated model coefficients are equal 
+        to the square root of the Covariance Matrix diagonals.
 
         Parameters
         ----------
@@ -554,25 +597,25 @@ class GLM:
         Parameters
         ----------
         X : np.ndarray, shape (M, N)
-            The input design matrix, where M is the number of samples and N is the 
-            number of features. This should not include the intercept.
+            The input design matrix, where M is the number of samples and N 
+            is the number of features. This should not include the intercept.
         y : np.ndarray, shape (M, 1)
             The true target values for each sample in the dataset.
         exposure : Optional[np.ndarray], shape (M, 1)
-            The exposure values for each sample. These represent the varying exposure times, 
-            population sizes, or different rates of observation, which are used to scale 
-            the predicted values. It is a vector of size M containing the exposure values.
-            Not applicable for all GLMs.
+            The exposure values for each sample. These represent the varying 
+            exposure times, population sizes, or different rates of observation, 
+            which are used to scale the predicted values. It is a vector of size 
+            M containing the exposure values. Not applicable for all GLMs.
         var_names : Optional[List[Union[str, None]]]
-            Optional list of variable names. List must be in the same order that the 
-            variables appear in the design matrix. 'Intercept' should not be included 
-            in the list.
+            Optional list of variable names. List must be in the same order that 
+            the variables appear in the design matrix. 'Intercept' should not 
+            be included in the list.
 
         Raises
         ------
         ValueError
-            If the length of `var_names` does not equal the number of dimensions in the 
-            input matrix.
+            If the length of `var_names` does not equal the number of dimensions 
+            in the input matrix.
         
         Returns
         -------
@@ -626,16 +669,16 @@ class GLM:
         Predict the target values for the given input data.
 
         The model makes predictions using the learned intercept and coefficients. 
-        Predicted values are transformed into the appropriate response using the 
-        child class implementation of the `_link_func()`.
+        Predicted values are transformed into the appropriate response using 
+        the child class implementation of the `_link_func()`.
 
         Parameters
         ----------
         X : np.ndarray, shape (M, N)
             Design matrix with N rows (samples) and N columns (features).
-            The number of columns (N) must match the number of coefficients. The
-            design matrix should not include the intercept; it is added within this
-            class method.
+            The number of columns (N) must match the number of coefficients. 
+            The design matrix should not include the intercept; it is added 
+            within this class method.
 
         Returns
         -------

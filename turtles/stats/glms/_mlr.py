@@ -24,23 +24,25 @@ class MLR:
     """
     Multiple Linear Regression using Oridinary Least Squares (OLS).
 
-    As a reminder, simple Multiple Linear Regression requires the following assumptions:
+    As a reminder, simple Multiple Linear Regression requires the following 
+    assumptions:
 
         1. Linearity / Mean Zero:  
-            The relationship between the dependent and each independent variable is linear, 
-            and the residuals (errors) have a mean of zero.
+            The relationship between the dependent and each independent variable 
+            is linear, and the residuals (errors) have a mean of zero.
         2. Constant Variance (Homoscedasticity):  
-            The variance of the residuals (errors) is constant, i.e., all errors have the same
-            variance.
+            The variance of the residuals (errors) is constant, i.e., all errors 
+            have the same variance.
         3. Independence (Uncorrelated Errors):  
-            The residuals are independent random variables of each other. This implies that 
-            there is no autocorrelation, meaning the error term at any given observation 
-            should not be correlated with the error term at any other observation.
+            The residuals are independent random variables of each other. This 
+            implies that there is no autocorrelation, meaning the error term at 
+            any given observation should not be correlated with the error term 
+            at any other observation.
         4. Normality of Errors:  
             The residuals of the model are approximately normally distributed.
 
-    The design matrix used to fit the model, X, has M rows and N dimensions, excluding 
-    the intercept.
+    The design matrix used to fit the model, X, has M rows and N dimensions, 
+    excluding the intercept.
 
     Regularization is not currently supported.
 
@@ -262,15 +264,15 @@ class MLR:
         y : np.ndarray, shape (M, 1)
             True target values, where M is the number of samples.
         var_names : Optional[List[Union[str, None]]]
-            Optional list of variable names. List must be in the same order that the 
-            variables appear in the design matrix. 'Intercept' should not be included 
-            in the list.
+            Optional list of variable names. List must be in the same order that 
+            the variables appear in the design matrix. 'Intercept' should not 
+            be included in the list.
 
         Raises
         ------
         ValueError
-            If the length of `var_names` does not equal the number of dimensions in the 
-            input matrix.
+            If the length of `var_names` does not equal the number of dimensions 
+            in the input matrix.
 
         Returns
         -------
@@ -328,19 +330,25 @@ class MLR:
         self._std_residuals = self._residuals / self._rmse
 
         # estimate sample variance
-        self._variance = ((self._residuals.T @ self._residuals) / self._dof)[0][0]
+        self._variance = (
+            (self._residuals.T @ self._residuals) / self._dof
+        )[0][0]
         
         # Variance-Covariance matrix -- (N+1, N+1)
         self._covariance = self._mse * np.linalg.inv(X.T @ X)
 
         # std error of betas
-        self._std_error_betas = np.sqrt(np.diag(self._covariance)).reshape(1, self._n+1)
+        self._std_error_betas = np.sqrt(
+            np.diag(self._covariance)
+        ).reshape(1, self._n+1)
 
         # coefficient t-stats -- (1, N+1)
         self._t_stat_betas = self._betas / self._std_error_betas
 
         # use t-dist CDF to get p-values -- (1, N+1)
-        self._p_values = (1 - t.cdf(np.abs(self._t_stat_betas), self._dof)) * 2
+        self._p_values = (
+            1 - t.cdf(np.abs(self._t_stat_betas), self._dof)
+        ) * 2
 
         # use t-dist PPF to get critical t-value at 95% confidence
         self._critical_t = t.ppf(1 - 0.05/2, self._dof)
@@ -361,9 +369,9 @@ class MLR:
         ----------
         X : np.ndarray, shape (M, N)
             Design matrix with N rows (samples) and N columns (features).
-            The number of columns (N) must match the number of coefficients. The
-            design matrix should not include the intercept; it is added within this
-            class method.
+            The number of columns (N) must match the number of coefficients. 
+            The design matrix should not include the intercept; it is added 
+            within this class method.
 
         Returns
         -------

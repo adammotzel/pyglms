@@ -16,7 +16,7 @@ I created this package as a refresher on GLMs and the underlying optimization te
 
 The code is packaged as a Python library named `turtles` ([I like turtles](https://www.youtube.com/watch?v=CMNry4PE93Y)), making the code easy to integrate into your own projects.
 
-The package is written using `numpy` for linear algebra operations, `scipy` for (some) optimization, `pandas` for displaying tabular results, `matplotlib` for plots, and `pydantic` for input validation.
+The package is written using `numpy` for linear algebra operations, `scipy` for (some) optimization, `pandas` for displaying tabular results, and `matplotlib` for plots.
 
 The following models have been implemented:
 
@@ -43,10 +43,8 @@ Activate the env (`source venv/Scripts/activate` for Windows OS, `source venv/bi
 
 ```bash
 pip install . 
-pip install -r requirements-dev.txt
+pip install -e .[dev]
 ```
-
-**NOTE**: `requirements-dev.txt` contains the dev dependencies, which are not part of the packaged distribution. See the `pyproject.toml` file for true package dependencies.
 
 Optionally, you can execute `scripts/env.sh` to create and activate a virtual environment using `uv`. The `uv` package manager must be installed for this to work.
 

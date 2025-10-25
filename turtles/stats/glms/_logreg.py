@@ -18,11 +18,12 @@ class LogReg(GLM):
         2. Independence:
             [y_i, y_i+1, ..., y_n] are independent random variables.
         3. Logit Link Function:
-            We link the probability of success to the predicting variables via the 'logit' 
-            link function.
+            We link the probability of success to the predicting variables via 
+            the 'logit' link function.
 
-    The design matrix used to fit the model, X, has M rows and N dimensions, excluding the 
-    intercept. I.e., it has shape (M, N), or (M, N+1) with the intercept.
+    The design matrix used to fit the model, X, has M rows and N dimensions, 
+    excluding the intercept. I.e., it has shape (M, N), or (M, N+1) with the 
+    intercept.
 
     Regularization is not currently supported.
 
@@ -37,21 +38,25 @@ class LogReg(GLM):
         The tolerance for stopping the fitting algorithm when the change in model 
         parameters is below this value. Only applicable for `grad` and `newton`.
     beta_momentum : float, default=0.9
-        Momentum hyperparameter for the gradient descent update. Only used and required 
-        when method = 'grad'. A value of 0 is equivalent to standard gradient descent.
+        Momentum hyperparameter for the gradient descent update. Only used and 
+        required when method = 'grad'. A value of 0 is equivalent to standard 
+        gradient descent.
     method : Literal['newton', 'grad', 'lbfgs'], default 'lbfgs'.
-        Optimization method for fitting the model. Currently supported algorithms are:
-            - `grad`: Gradient Descent (first-order). Requires hyperparameter tuning 
-                (`learning_rate`, `tolerance`, `beta_momentum`, `max_iter`).
-            - `newton`: Newton's Method (second-order). Requires hyperparameter tuning 
-                (`learning_rate`, `tolerance`, `max_iter`).
-            - `lbfgs`: Low-memory Broyden-Fletcher-Goldfarb-Shanno algorithm (quasi-Newton). 
-                Does not require hyperparameter tuning; only uses `max_iter`.
+        Optimization method for fitting the model. Currently supported algorithms 
+        are:
+            - `grad`: Gradient Descent (first-order). Requires hyperparameter 
+              tuning (`learning_rate`, `tolerance`, `beta_momentum`, `max_iter`).
+            - `newton`: Newton's Method (second-order). Requires hyperparameter 
+              tuning (`learning_rate`, `tolerance`, `max_iter`).
+            - `lbfgs`: Low-memory Broyden-Fletcher-Goldfarb-Shanno algorithm 
+              (quasi-Newton). Does not require hyperparameter tuning; only uses 
+              `max_iter`.
     iterations : int
         The number of iterations performed by the optimization algorithm.
     betas : np.ndarray, shape (1, N+1)
-        The model parameters (coefficients) learned during the fitting process, where N is the 
-        number of features. The element is position [0] is the intercept.
+        The model parameters (coefficients) learned during the fitting process, 
+        where N is the number of features. The element is position [0] is the 
+        intercept.
     observations : int
         Number of observations in the design matrix.
     dimensions : int
@@ -59,18 +64,19 @@ class LogReg(GLM):
     std_error_betas : np.ndarray, shape (1, N+1)
         The standard errors of the estimated model coefficients.
     last_gradient : np.ndarray, shape (1, N+1)
-        The gradient vector from the last iteration of the optimization algorithm. Not applicable 
-        for the L-BFGS algorithm.
+        The gradient vector from the last iteration of the optimization algorithm. 
+        Not applicable for the L-BFGS algorithm.
     last_velocity : np.ndarray, shape (1, N+1)
-        The velocity vector from the last iteration of the optimization algorithm. Only 
-        used in momentum-based optimization methods like gradient descent.
+        The velocity vector from the last iteration of the optimization algorithm. 
+        Only used in momentum-based optimization methods like gradient descent.
     z_stat_betas : np.ndarray, shape (1, N+1)
         The z-statistics for the estimated model coefficients.
     p_values : np.ndarray, shape (1, N+1)
-        The p-values corresponding to the z-statistics for the estimated model coefficients.
+        The p-values corresponding to the z-statistics for the estimated model 
+        coefficients.
     critical_z : float
-        The critical z-value for the estimated model coefficients, based on a 95% confidence 
-        level.
+        The critical z-value for the estimated model coefficients, based on a 
+        95% confidence level.
     confidence_interval : Tuple[np.ndarray, np.ndarray]
         95% confidence interval for the estimated model coefficients.
     degrees_of_freedom : int
@@ -81,8 +87,8 @@ class LogReg(GLM):
     fit(X, y)
         Fit the Poisson regression model to the input data.
     predict(X)
-        Predict the target values (counts) for the input data based on the fitted model 
-        coefficients.
+        Predict the target values (counts) for the input data based on the 
+        fitted model coefficients.
     summary()
         Generate a model summary table.
     """
@@ -94,19 +100,19 @@ class LogReg(GLM):
         y: np.ndarray
     ) -> float:
         """
-        Compute the negative log-likelihood for Logistic regression. This is the objective 
-        function we want to minimize in the scipy L-BFGS solver.
+        Compute the negative log-likelihood for Logistic regression. This is 
+        the objective function we want to minimize in the scipy L-BFGS solver.
 
         Parameters
         ----------
         betas : np.ndarray, shape (1, N+1)
             The estimated model coefficients including the intercept (position [0]).
         X : np.ndarray, shape (M, N)
-            The input design matrix, where M is the number of samples and N is the number 
-            of features.
+            The input design matrix, where M is the number of samples and N is 
+            the number of features.
         y : np.ndarray, shape (M, 1)
-            The true target values for each sample in the dataset. It is a vector of size 
-            M containing the counts.
+            The true target values for each sample in the dataset. It is a vector 
+            of size M containing the counts.
 
         Returns
         -------
@@ -145,20 +151,20 @@ class LogReg(GLM):
         Compute the Gradient (first derivative) of the log-likelihood loss function 
         with respect to the model parameters.
 
-        Calculating the Gradient is the first step of each iteration during model fitting. 
-        As such, we set the 'self._current_sigmoid' instance attribute so it can be used 
-        by second-order methods during each iteration.
+        Calculating the Gradient is the first step of each iteration during model 
+        fitting. As such, we set the 'self._current_sigmoid' instance attribute 
+        so it can be used by second-order methods during each iteration.
 
         Parameters
         ----------
         betas : np.ndarray, shape (1, N+1)
             The estimated model coefficients including the intercept (position [0]).
         X : np.ndarray, shape (M, N)
-            The input design matrix, where M is the number of samples and N is the number 
-            of features.
+            The input design matrix, where M is the number of samples and N is 
+            the number of features.
         y : np.ndarray, shape (M, 1)
-            The true target values for each sample in the dataset. It is a vector of size 
-            M containing the counts.
+            The true target values for each sample in the dataset. It is a vector 
+            of size M containing the counts.
 
         Returns
         -------
@@ -180,8 +186,8 @@ class LogReg(GLM):
         Parameters
         ----------
         X : np.ndarray, shape (M, N)
-            The input design matrix, where M is the number of samples and N is the 
-            number of features.
+            The input design matrix, where M is the number of samples and N is 
+            the number of features.
 
         Returns
         -------

@@ -35,11 +35,11 @@ def calculate_errors(
         True target array. Must be the same shape as y_pred and have 1 dimension
         or be flattened.
     y_pred : np.ndarray
-        Predicted values target array. Must be the same shape as y_true and have 1 
-        dimension or be flattened.
+        Predicted values target array. Must be the same shape as y_true and have 
+        1 dimension or be flattened.
     m : int
-        Number of observations. If using this function to calculate model fit statistics,
-        'm' should be the degrees of freedom.
+        Number of observations. If using this function to calculate model fit 
+        statistics, 'm' should be the degrees of freedom.
 
     Returns
     -------
@@ -88,9 +88,9 @@ def variance_inflation_factor(
     X : np.ndarray, shape (m, n)
         Design matrix. Should not include an intercept.
     var_names : Optional[List[str]]
-        Variable names. If not passed, defaults to `x_i` where `i` is the order of 
-        the dimension in the input matrix. Names must appear in the order that they 
-        do in the input matrix.
+        Variable names. If not passed, defaults to `x_i` where `i` is the order 
+        of the dimension in the input matrix. Names must appear in the order 
+        that they do in the input matrix.
 
     Returns
     -------

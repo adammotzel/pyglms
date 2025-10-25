@@ -25,8 +25,8 @@ class PoissonReg(GLM):
             The variance is equal to the mean, i.e., there is no over or 
             under dispersion.
 
-    The design matrix used to fit the model, X, has M rows and N dimensions, excluding 
-    the intercept.
+    The design matrix used to fit the model, X, has M rows and N dimensions, 
+    excluding the intercept.
 
     Regularization is not currently supported.
 
@@ -41,21 +41,25 @@ class PoissonReg(GLM):
         The tolerance for stopping the fitting algorithm when the change in model 
         parameters is below this value. Only applicable for `grad` and `newton`.
     beta_momentum : float, default=0.9
-        Momentum hyperparameter for the gradient descent update. Only used and required 
-        when method = 'grad'. A value of 0 is equivalent to standard gradient descent.
+        Momentum hyperparameter for the gradient descent update. Only used and 
+        required when method = 'grad'. A value of 0 is equivalent to standard 
+        gradient descent.
     method : Literal['newton', 'grad', 'lbfgs'], default 'lbfgs'.
-        Optimization method for fitting the model. Currently supported algorithms are:
-            - `grad`: Gradient Descent (first-order). Requires hyperparameter tuning 
-                (`learning_rate`, `tolerance`, `beta_momentum`, `max_iter`).
-            - `newton`: Newton's Method (second-order). Requires hyperparameter tuning 
-                (`learning_rate`, `tolerance`, `max_iter`).
-            - `lbfgs`: Low-memory Broyden-Fletcher-Goldfarb-Shanno algorithm (quasi-Newton). 
-                Does not require hyperparameter tuning; only uses `max_iter`.
+        Optimization method for fitting the model. Currently supported algorithms 
+        are:
+            - `grad`: Gradient Descent (first-order). Requires hyperparameter 
+              tuning (`learning_rate`, `tolerance`, `beta_momentum`, `max_iter`).
+            - `newton`: Newton's Method (second-order). Requires hyperparameter 
+              tuning (`learning_rate`, `tolerance`, `max_iter`).
+            - `lbfgs`: Low-memory Broyden-Fletcher-Goldfarb-Shanno algorithm 
+              (quasi-Newton). Does not require hyperparameter tuning; only uses 
+              `max_iter`.
     iterations : int
         The number of iterations performed by the optimization algorithm.
     betas : np.ndarray, shape (1, N+1)
-        The model parameters (coefficients) learned during the fitting process, where N is the 
-        number of features. The element is position [0] is the intercept.
+        The model parameters (coefficients) learned during the fitting process, 
+        where N is the number of features. The element is position [0] is the 
+        intercept.
     observations : int
         Number of observations in the design matrix.
     dimensions : int
@@ -63,18 +67,19 @@ class PoissonReg(GLM):
     std_error_betas : np.ndarray, shape (1, N+1)
         The standard errors of the estimated model coefficients.
     last_gradient : np.ndarray, shape (1, N+1)
-        The gradient vector from the last iteration of the optimization algorithm. Not applicable 
-        for the L-BFGS algorithm.
+        The gradient vector from the last iteration of the optimization algorithm. 
+        Not applicable for the L-BFGS algorithm.
     last_velocity : np.ndarray, shape (1, N+1)
-        The velocity vector from the last iteration of the optimization algorithm. Only 
-        used in momentum-based optimization methods like gradient descent.
+        The velocity vector from the last iteration of the optimization algorithm. 
+        Only used in momentum-based optimization methods like gradient descent.
     z_stat_betas : np.ndarray, shape (1, N+1)
         The z-statistics for the estimated model coefficients.
     p_values : np.ndarray, shape (1, N+1)
-        The p-values corresponding to the z-statistics for the estimated model coefficients.
+        The p-values corresponding to the z-statistics for the estimated model 
+        coefficients.
     critical_z : float
-        The critical z-value for the estimated model coefficients, based on a 95% confidence 
-        level.
+        The critical z-value for the estimated model coefficients, based on a 
+        95% confidence level.
     confidence_interval : Tuple[np.ndarray, np.ndarray]
         95% confidence interval for the estimated model coefficients.
     degrees_of_freedom : int
@@ -82,17 +87,17 @@ class PoissonReg(GLM):
     deviance : float
         Deviance statistic; a goodness-of-fit measurement.
     dispersion : float
-        Dispersion statistic. In Poisson Regression, dispersion is expected to be 1.0. This 
-        is calculated as (deviance / degrees_of_freedom).
+        Dispersion statistic. In Poisson Regression, dispersion is expected to 
+        be 1.0. This is calculated as (deviance / degrees_of_freedom).
     
     Methods
     -------
     fit(X, y, exposure)
-        Fit the Poisson regression model to the input data. If exposure is not provided, an array 
-        of ones is used (i.e., we assume equal exposure).
+        Fit the Poisson regression model to the input data. If exposure is not 
+        provided, an array of ones is used (i.e., we assume equal exposure).
     predict(X)
-        Predict the target values (counts) for the input data based on the fitted model 
-        coefficients.
+        Predict the target values (counts) for the input data based on the 
+        fitted model coefficients.
     summary()
         Generate a model summary table.
     """
@@ -121,27 +126,28 @@ class PoissonReg(GLM):
         exposure: np.ndarray
     ) -> float:
         """
-        Compute the negative log-likelihood for Poisson regression. This is the objective 
-        function we want to minimize in the scipy L-BFGS solver.
+        Compute the negative log-likelihood for Poisson regression. This is the 
+        objective function we want to minimize in the scipy L-BFGS solver.
 
-        The exposure parameter is used to scale the predicted values (lambdas), typically 
-        when the count data is related to a varying exposure or different observation 
-        periods across the samples.
+        The exposure parameter is used to scale the predicted values (lambdas), 
+        typically when the count data is related to a varying exposure or 
+        different observation periods across the samples.
 
         Parameters
         ----------
         betas : np.ndarray, shape (1, N+1)
             The estimated model coefficients including the intercept (position [0]).
         X : np.ndarray, shape (M, N)
-            The input design matrix, where M is the number of samples and N is the number 
-            of features.
+            The input design matrix, where M is the number of samples and N is 
+            the number of features.
         y : np.ndarray, shape (M, 1)
-            The true target values for each sample in the dataset. It is a vector of size 
-            M containing the counts.
+            The true target values for each sample in the dataset. It is a vector 
+            of size M containing the counts.
         exposure : np.ndarray, shape (M, 1)
-            The exposure values for each sample. These represent the varying exposure times, 
-            population sizes, or different rates of observation, which are used to scale 
-            the predicted lambdas. It is a vector of size M containing the exposure values.
+            The exposure values for each sample. These represent the varying 
+            exposure times, population sizes, or different rates of observation, 
+            which are used to scale the predicted lambdas. It is a vector of size 
+            M containing the exposure values.
 
         Returns
         -------
@@ -179,30 +185,32 @@ class PoissonReg(GLM):
         Compute the Gradient (first derivative) of the loss function with respect 
         to the model parameters.
 
-        Calculating the Gradient is the first step of each iteration during model fitting. 
-        As such, we set the 'self._current_lambdas' instance attribute so it can be used 
-        by second-order methods during each iteration.
+        Calculating the Gradient is the first step of each iteration during model 
+        fitting. As such, we set the 'self._current_lambdas' instance attribute 
+        so it can be used by second-order methods during each iteration.
         
         Parameters
         ----------
         betas : np.ndarray, shape (1, N+1)
             The estimated model coefficients including the intercept (position [0]).
         X : np.ndarray, shape (M, N)
-            The input design matrix, where M is the number of samples and N is the number 
-            of features.
+            The input design matrix, where M is the number of samples and N is 
+            the number of features.
         y : np.ndarray, shape (M, 1)
-            The true target values for each sample in the dataset. It is a vector of size 
-            M containing the counts.
+            The true target values for each sample in the dataset. It is a vector 
+            of size M containing the counts.
         exposure : np.ndarray, shape (M, 1)
-            The exposure values for each sample. These represent the varying exposure times, 
-            population sizes, or different rates of observation, which are used to scale 
-            the predicted lambdas. It is a vector of size M containing the exposure values.
+            The exposure values for each sample. These represent the varying 
+            exposure times, population sizes, or different rates of observation, 
+            which are used to scale the predicted lambdas. It is a vector of size 
+            M containing the exposure values.
         
         Returns
         -------
         np.ndarray, shape (1, N)
-            The Gradient of the loss function with respect to the model parameters (betas), 
-            which will be used to update the model parameters during model fitting.
+            The Gradient of the loss function with respect to the model parameters 
+            (betas), which will be used to update the model parameters during 
+            model fitting.
         """
         # lambdas is (M, 1), gradient (N, 1)
         self._current_lambdas = self._link_func(X @ betas.T) * exposure
@@ -217,8 +225,8 @@ class PoissonReg(GLM):
         Parameters
         ----------
         X : np.ndarray, shape (M, N)
-            The input design matrix, where M is the number of samples and N is the 
-            number of features.
+            The input design matrix, where M is the number of samples and N is 
+            the number of features.
 
         Returns
         -------
