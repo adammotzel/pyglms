@@ -4,7 +4,6 @@
 ![License](https://img.shields.io/github/license/adammotzel/pyglms)
 
 
-
 # PyGLMs
 
 An implementation of various Generalized Linear Models (GLMs), written in Python.
@@ -42,7 +41,6 @@ python -m venv venv
 Activate the env (`source venv/Scripts/activate` for Windows OS, `source venv/bin/activate` for Linux) and install dependencies:
 
 ```bash
-pip install . 
 pip install -e .[dev]
 ```
 
