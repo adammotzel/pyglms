@@ -2,10 +2,10 @@
 ![coverage](https://img.shields.io/badge/coverage-94%25-brightgreen)
 ![Python](https://img.shields.io/badge/python-3.10%20--%203.13-blue)
 ![License](https://img.shields.io/github/license/adammotzel/pyglms)
+ ![PyPI](https://img.shields.io/pypi/v/turtles-glms.svg)
 
 
-
-# PyGLMs
+# PyGLMs (Turtles)
 
 An implementation of various Generalized Linear Models (GLMs), written in Python.
 
@@ -29,6 +29,15 @@ The `GLM` parent class supports three optimization methods for parameter estimat
 Momentum-based Gradient Descent and Newton's Method are implemented in Python as part of the `turtles` distribution. L-BFGS is implemented using `scipy.optimize`; it's a quasi-Newton method that approximates the Hessian (instead of fully computing it, like Newton's Method), so it's quite fast.
 
 See `examples/{class name}_example.ipynb` for simple examples of using each model class and various supporting functions.
+
+
+## Usage
+
+You can pip install the package from PyPI:
+
+```bash
+pip install turtles-glms
+```
 
 
 ## Contributing
