@@ -36,10 +36,10 @@ See `examples/{class name}_example.ipynb` for simple examples of using each mode
 To run (and edit) this project locally, clone the repo and create your virtual environment from project root using your global (or local) Python version. This project requires Python 3.10+.
 
 ```bash
-python -m venv venv
+python -m venv
 ```
 
-Activate the env (`source venv/Scripts/activate` for Windows OS, `source venv/bin/activate` for Linux) and install dependencies:
+Activate the env (`source .venv/Scripts/activate` for Windows OS, `source .venv/bin/activate` for Linux) and install dependencies:
 
 ```bash
 pip install -e .[dev]

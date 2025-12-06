@@ -174,3 +174,4 @@ cython_debug/
 # custom
 TODO.*
 .vscode/
+uv.lock
