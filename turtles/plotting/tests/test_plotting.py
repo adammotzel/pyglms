@@ -28,6 +28,7 @@ def test_default_labels_and_title():
     y = np.array([2, 4, 6, 8])
 
     with (
+        patch("matplotlib.pyplot.show") as mock_show,
         patch("matplotlib.pyplot.title") as mock_title,
         patch("matplotlib.pyplot.xlabel") as mock_xlabel,
         patch("matplotlib.pyplot.ylabel") as mock_ylabel,
@@ -35,6 +36,7 @@ def test_default_labels_and_title():
 
         plot_y_vs_x(x, y)
 
+        mock_show.assert_called()
         mock_title.assert_called_with("Dependent vs. Independent")
         mock_xlabel.assert_called_with("Independent")
         mock_ylabel.assert_called_with("Dependent")
@@ -50,6 +52,7 @@ def test_custom_labels_and_title():
     ylabel = "Custom Y-Axis"
 
     with (
+        patch("matplotlib.pyplot.show") as mock_show,
         patch("matplotlib.pyplot.title") as mock_title,
         patch("matplotlib.pyplot.xlabel") as mock_xlabel,
         patch("matplotlib.pyplot.ylabel") as mock_ylabel,
@@ -57,6 +60,7 @@ def test_custom_labels_and_title():
 
         plot_y_vs_x(x, y, title=title, xlabel=xlabel, ylabel=ylabel)
 
+        mock_show.assert_called()
         mock_title.assert_called_with(title)
         mock_xlabel.assert_called_with(xlabel)
         mock_ylabel.assert_called_with(ylabel)
