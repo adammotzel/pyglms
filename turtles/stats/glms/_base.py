@@ -64,6 +64,7 @@ instance attributes, etc. as needed, as long as they don't conlfict with what's
 described above.
 """
 
+import warnings
 from typing import (
     Optional, 
     Literal, 
@@ -80,6 +81,7 @@ from ..._utils import (
     _validate_args,
     _add_intercept
 )
+from ._warnings import SingularityWarning
 
 _supported_methods = ["newton", "grad", "lbfgs"]
 
@@ -335,7 +337,7 @@ class GLM:
 
         Raises
         ------
-        Warning
+        SingularityWarning
             If the Hessian matrix is singular and the inverse cannot be computed. 
             This may happen if the hyperparameters are not tuned properly, or
             multicollinearity exists.
@@ -348,9 +350,14 @@ class GLM:
         try:
             hessian_inv = np.linalg.inv(H)
         except np.linalg.LinAlgError:
-            raise Warning(
-                "Hessian matrix is singular, cannot compute inverse."
+            warnings.warn(
+                "Hessian matrix is singular, cannot compute standard inverse. "
+                "Falling back to the Moore-Penrose Pseudoinverse (np.linalg.pinv)."
+                "This often indicates perfect collinearity in the design matrix.",
+                SingularityWarning,
+                stacklevel=2,
             )
+            hessian_inv = np.linalg.pinv(H)
         return hessian_inv
     
     def _gradient_descent(self, **kwargs):
