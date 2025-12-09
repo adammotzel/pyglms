@@ -8,14 +8,13 @@ This is just a simple way of ensuring the MLR class calculates the core model re
 correctly.
 """
 
-import pytest
 import numpy as np
+import pytest
 import statsmodels.api as sm
-from sklearn.datasets import load_diabetes
 from scipy.stats import t
+from sklearn.datasets import load_diabetes
 
 from turtles.stats.glms import MLR
-
 
 tol = 1e-5
 prec = 5
@@ -40,7 +39,7 @@ sm_preds = sm_model.predict(X)
 
 # calculate critical t-value
 # SM OLS models don't offer this property
-sm_critical_t = t.ppf(1 - 0.05/2, sm_model.df_resid)
+sm_critical_t = t.ppf(1 - 0.05 / 2, sm_model.df_resid)
 
 
 def test_mlr():
@@ -68,7 +67,7 @@ def test_mlr():
         19. Estimated Coefficient t-stats
         20. Estimated Coefficient Standard Errors
         21. Model predictions (to ensure .predict() works)
-    
+
     Other tests:
 
         22. _is_fit()
@@ -83,101 +82,31 @@ def test_mlr():
     assert model.dimensions == X.shape[1] - 1
     assert model.degrees_of_freedom == sm_model.df_resid
 
+    assert np.isclose(model.intercept, sm_model.params[0], atol=tol).all()
+    assert np.isclose(model.betas[0], sm_model.params, atol=tol).all()
+    assert np.isclose(model.residuals.flatten(), sm_model.resid, atol=tol).all()
+    assert np.isclose(model.variance, sm_model.scale, atol=tol).all()
+    assert np.isclose(model.rss, sm_model.ssr, atol=tol).all()
+    assert np.isclose(model.rmse, np.sqrt(sm_model.mse_resid), atol=tol).all()
     assert np.isclose(
-        model.intercept,
-        sm_model.params[0],
-        atol=tol
+        model.std_residuals.flatten(), sm_model.resid_pearson, atol=tol
+    ).all()
+    assert np.isclose(model.covariance, sm_model.cov_params(), atol=tol).all()
+    assert np.isclose(model.critical_t, sm_critical_t, atol=tol).all()
+    assert np.isclose(
+        model.confidence_interval[0][0], sm_model.conf_int()[:, 0], atol=tol
     ).all()
     assert np.isclose(
-        model.betas[0],
-        sm_model.params,
-        atol=tol
+        model.confidence_interval[1][0], sm_model.conf_int()[:, 1], atol=tol
     ).all()
-    assert np.isclose(
-        model.residuals.flatten(),
-        sm_model.resid,
-        atol=tol
-    ).all()
-    assert np.isclose(
-        model.variance,
-        sm_model.scale,
-        atol=tol
-    ).all()
-    assert np.isclose(
-        model.rss,
-        sm_model.ssr,
-        atol=tol
-    ).all()
-    assert np.isclose(
-        model.rmse,
-        np.sqrt(sm_model.mse_resid),
-        atol=tol
-    ).all()
-    assert np.isclose(
-        model.std_residuals.flatten(),
-        sm_model.resid_pearson,
-        atol=tol
-    ).all()
-    assert np.isclose(
-        model.covariance,
-        sm_model.cov_params(),
-        atol=tol
-    ).all()
-    assert np.isclose(
-        model.critical_t,
-        sm_critical_t,
-        atol=tol
-    ).all()
-    assert np.isclose(
-        model.confidence_interval[0][0],
-        sm_model.conf_int()[:,0],
-        atol=tol
-    ).all()
-    assert np.isclose(
-        model.confidence_interval[1][0],
-        sm_model.conf_int()[:,1],
-        atol=tol
-    ).all()
-    assert np.isclose(
-        model.sst,
-        sm_model.centered_tss,
-        atol=tol
-    ).all()
-    assert np.isclose(
-        model.mse, 
-        sm_model.mse_resid,
-        atol=tol
-    )
-    assert np.isclose(
-        model.p_values[0],
-        sm_model.pvalues,
-        atol=tol
-    ).all()
-    assert np.isclose(
-        model.r2, 
-        sm_model.rsquared,
-        atol=tol
-    ).all()
-    assert np.isclose(
-        model.r2_adj, 
-        sm_model.rsquared_adj,
-        atol=tol
-    ).all()
-    assert np.isclose(
-        model.t_stat_betas[0],
-        sm_model.tvalues,
-        atol=tol
-    ).all()
-    assert np.isclose(
-        model.std_error_betas[0],
-        sm_model.bse,
-        atol=tol
-    ).all()
-    assert np.isclose(
-        preds.flatten(),
-        sm_preds,
-        atol=tol
-    ).all()
+    assert np.isclose(model.sst, sm_model.centered_tss, atol=tol).all()
+    assert np.isclose(model.mse, sm_model.mse_resid, atol=tol)
+    assert np.isclose(model.p_values[0], sm_model.pvalues, atol=tol).all()
+    assert np.isclose(model.r2, sm_model.rsquared, atol=tol).all()
+    assert np.isclose(model.r2_adj, sm_model.rsquared_adj, atol=tol).all()
+    assert np.isclose(model.t_stat_betas[0], sm_model.tvalues, atol=tol).all()
+    assert np.isclose(model.std_error_betas[0], sm_model.bse, atol=tol).all()
+    assert np.isclose(preds.flatten(), sm_preds, atol=tol).all()
 
     # ----- General testing -----
 
