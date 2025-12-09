@@ -2,18 +2,18 @@
 Plotting functions.
 """
 
-import numpy as np
 import matplotlib.pyplot as plt
+import numpy as np
 
 from .._utils import _validate_args
 
 
 def plot_y_vs_x(
-        x: np.ndarray, 
-        y: np.ndarray, 
-        title: str = "Dependent vs. Independent",
-        xlabel: str = "Independent",
-        ylabel: str = "Dependent"
+    x: np.ndarray,
+    y: np.ndarray,
+    title: str = "Dependent vs. Independent",
+    xlabel: str = "Independent",
+    ylabel: str = "Dependent",
 ):
     """
     Scatter plot of a variable (y) against another variable (x).
@@ -45,16 +45,11 @@ def plot_y_vs_x(
             "y": (y, np.ndarray),
             "title": (title, str),
             "xlabel": (xlabel, str),
-            "ylabel": (ylabel, str)
+            "ylabel": (ylabel, str),
         }
     )
 
-    plt.scatter(
-        x=x,
-        y=y,
-        color="blue", 
-        edgecolor="black"
-    )
+    plt.scatter(x=x, y=y, color="blue", edgecolor="black")
     plt.title(title)
     plt.xlabel(xlabel)
     plt.ylabel(ylabel)

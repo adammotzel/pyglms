@@ -8,14 +8,12 @@ just a simply way of ensuring the PoissonReg class calculates the core model res
 correctly.
 """
 
-import statsmodels.api as sm
 import numpy as np
 import pandas as pd
-from sklearn.datasets import fetch_openml
+import statsmodels.api as sm
 
-from turtles.stats.glms import PoissonReg
 from turtles.preprocess import one_hot_encode
-
+from turtles.stats.glms import PoissonReg
 
 # we'll increase the tolerance a bit because the models are fit using MLE
 tol = 1e-4
@@ -51,12 +49,7 @@ preds = model.predict(X)
 X = sm.add_constant(X)
 y = y.flatten()
 exposure = exposure.flatten()
-sm_model = sm.GLM(
-    y, 
-    X, 
-    exposure=exposure,
-    family=sm.families.Poisson()
-).fit()
+sm_model = sm.GLM(y, X, exposure=exposure, family=sm.families.Poisson()).fit()
 sm_preds = sm_model.predict(X)
 
 
@@ -78,38 +71,10 @@ def test_poissonreg():
     assert all([col in summary["Variable"].unique() for col in var_names])
     assert model.observations == sm_model.nobs
     assert model.degrees_of_freedom == sm_model.df_resid
-    np.isclose(
-        model.betas[0],
-        sm_model.params,
-        atol=tol
-    )
-    np.isclose(
-        model.p_values[0],
-        sm_model.pvalues,
-        atol=tol
-    )
-    np.isclose(
-        model.std_error_betas[0],
-        sm_model.bse,
-        atol=tol
-    )
-    np.isclose(
-        model.z_stat_betas[0],
-        sm_model.tvalues,
-        atol=tol
-    )
-    np.isclose(
-        preds,
-        sm_preds,
-        atol=tol
-    )
-    np.isclose(
-        model.deviance,
-        sm_model.deviance,
-        atol=tol
-    )
-    np.isclose(
-        model.dispersion,
-        sm_model.deviance / sm_model.df_resid,
-        atol=tol
-    )
+    np.isclose(model.betas[0], sm_model.params, atol=tol)
+    np.isclose(model.p_values[0], sm_model.pvalues, atol=tol)
+    np.isclose(model.std_error_betas[0], sm_model.bse, atol=tol)
+    np.isclose(model.z_stat_betas[0], sm_model.tvalues, atol=tol)
+    np.isclose(preds, sm_preds, atol=tol)
+    np.isclose(model.deviance, sm_model.deviance, atol=tol)
+    np.isclose(model.dispersion, sm_model.deviance / sm_model.df_resid, atol=tol)

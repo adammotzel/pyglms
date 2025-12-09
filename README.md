@@ -1,11 +1,11 @@
 ![CI](https://github.com/adammotzel/pyglms/actions/workflows/ci.yaml/badge.svg)
-![coverage](https://img.shields.io/badge/coverage-94%25-brightgreen)
+![coverage](https://img.shields.io/badge/coverage-93%25-brightgreen)
 ![Python](https://img.shields.io/badge/python-3.10%20--%203.13-blue)
 ![License](https://img.shields.io/github/license/adammotzel/pyglms)
  ![PyPI](https://img.shields.io/pypi/v/turtles-glms.svg)
 
 
-# PyGLMs (Turtles)
+# PyGLMs (Turtles) 🐢
 
 An implementation of various Generalized Linear Models (GLMs), written in Python.
 
@@ -28,8 +28,6 @@ The `GLM` parent class supports three optimization methods for parameter estimat
 
 Momentum-based Gradient Descent and Newton's Method are implemented in Python as part of the `turtles` distribution. L-BFGS is implemented using `scipy.optimize`; it's a quasi-Newton method that approximates the Hessian (instead of fully computing it, like Newton's Method), so it's quite fast.
 
-See `examples/{class name}_example.ipynb` for simple examples of using each model class and various supporting functions.
-
 
 ## Usage
 
@@ -38,6 +36,29 @@ You can pip install the package from PyPI:
 ```bash
 pip install turtles-glms
 ```
+
+See `examples/` in the [GitHub repo](https://github.com/adammotzel/pyglms) for example usage of the GLM classes and statistical functions.
+
+### Fitting GLMs
+
+You can fit GLMs by instantiating a GLM class and calling its `fit()` method.
+
+```python
+model = PoissonReg(
+    method="newton",
+    learning_rate=0.01
+)
+n_model.fit(
+    X=X, 
+    y=y, 
+    exposure=exposure
+)
+```
+
+A few important notes about fitting `turtles` GLMs:
+1. The `fit()` method parameters `X`, `y`, and (for Poisson) `exposure` must be `numpy` arrays. Parameters `y` and `exposure` must be of shape `(M, 1)`, where `M` is the number of rows in the data. The package does not support `pandas` or `polars` dataframes at this time. See class / instance method docstrings for exact requirements.
+2. Each GLM class has a `learning_rate` parameter, applicable to Gradient Descent and Newton's optimization methods. The learning rate (or step size) is a hyperparameter that controls the magnitude of parameter updates during the optimization process. If it's too large, the Hessian matrix may become singular, in which case the learning rate should be decreased. This is typically part of the tuning process.
+3. There are currently no regularization methods implemented in the package. Future versions may include L1, L2, and Elastic Net methods.
 
 
 ## Contributing

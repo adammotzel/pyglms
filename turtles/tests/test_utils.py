@@ -2,15 +2,10 @@
 Unit tests for functions from the _utils module.
 """
 
-import pytest
 import numpy as np
+import pytest
 
-from .._utils import (
-    _add_intercept,
-    _validate_args,
-    _shape_check
-)
-
+from .._utils import _add_intercept, _shape_check, _validate_args
 
 # ----- _validate_args() -----
 
@@ -21,12 +16,7 @@ def test_valid_input():
     X = np.array([1, 2, 3])
     Y = [1.5, 2.5, 3.5]
 
-    _validate_args(
-        {
-            "X": (X, np.ndarray),
-            "Y": (Y, list)
-        }
-    )
+    _validate_args({"X": (X, np.ndarray), "Y": (Y, list)})
 
 
 def test_invalid_type_X():
@@ -36,15 +26,10 @@ def test_invalid_type_X():
     Y = [1.5, 2.5, 3.5]
 
     with pytest.raises(
-        TypeError, 
-        match="Parameter 'X' must be of type <class 'numpy.ndarray'>; received <class 'list'>"
+        TypeError,
+        match="Parameter 'X' must be of type <class 'numpy.ndarray'>; received <class 'list'>",
     ):
-        _validate_args(
-            {
-                "X": (X, np.ndarray),
-                "Y": (Y, (int, float))
-            }
-        )
+        _validate_args({"X": (X, np.ndarray), "Y": (Y, (int, float))})
 
 
 def test_invalid_type_Y():
@@ -54,29 +39,19 @@ def test_invalid_type_Y():
     Y = "invalid_string"
 
     with pytest.raises(
-        TypeError, 
-        match="Parameter 'Y' must be one of the types \\(<class 'int'>, <class 'float'>\\); received <class 'str'>"
+        TypeError,
+        match="Parameter 'Y' must be one of the types \\(<class 'int'>, <class 'float'>\\); received <class 'str'>",
     ):
-        _validate_args(
-            {
-                "X": (X, np.ndarray),
-                "Y": (Y, (int, float))
-            }
-        )
+        _validate_args({"X": (X, np.ndarray), "Y": (Y, (int, float))})
 
 
 def test_multiple_valid_types():
     """Test multiple valid types."""
 
     X = np.array([1, 2, 3])
-    Y = 4 
+    Y = 4
 
-    _validate_args(
-        {
-            "X": (X, np.ndarray),
-            "Y": (Y, (int, float))
-        }
-    )
+    _validate_args({"X": (X, np.ndarray), "Y": (Y, (int, float))})
 
 
 def test_multiple_invalid_types():
@@ -86,16 +61,11 @@ def test_multiple_invalid_types():
     Y = [1.5, 2.5, 3.5]
 
     with pytest.raises(
-        TypeError, 
-        match="Parameter 'X' must be of type <class 'numpy.ndarray'>; received <class 'float'>"
+        TypeError,
+        match="Parameter 'X' must be of type <class 'numpy.ndarray'>; received <class 'float'>",
     ):
-        
-        _validate_args(
-            {
-                "X": (X, np.ndarray),
-                "Y": (Y, (int, float))
-            }
-        )
+
+        _validate_args({"X": (X, np.ndarray), "Y": (Y, (int, float))})
 
 
 # ----- _add_intercept() -----
@@ -119,7 +89,7 @@ def test_add_intercept_empty():
     X = np.array([]).reshape(0, 0)
 
     expected_output = np.array([]).reshape(0, 1)
-    
+
     result = _add_intercept(X)
     np.testing.assert_array_equal(result, expected_output)
 

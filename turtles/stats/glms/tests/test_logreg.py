@@ -9,12 +9,10 @@ correctly.
 """
 
 import numpy as np
-import pandas as pd
-from sklearn.datasets import load_breast_cancer
 import statsmodels.api as sm
+from sklearn.datasets import load_breast_cancer
 
 from turtles.stats.glms import LogReg
-
 
 # we'll increase the tolerance a bit because the models are fit using MLE
 tol = 1e-4
@@ -55,28 +53,8 @@ def test_logreg():
     assert all([col in summary["Variable"].unique() for col in var_names])
     assert model.observations == sm_model.nobs
     assert model.degrees_of_freedom == sm_model.df_resid
-    np.isclose(
-        model.betas[0],
-        sm_model.params,
-        atol=tol
-    )
-    np.isclose(
-        model.p_values[0],
-        sm_model.pvalues,
-        atol=tol
-    )
-    np.isclose(
-        model.std_error_betas[0],
-        sm_model.bse,
-        atol=tol
-    )
-    np.isclose(
-        model.z_stat_betas[0],
-        sm_model.tvalues,
-        atol=tol
-    )
-    np.isclose(
-        preds,
-        sm_preds,
-        atol=tol
-    )
+    np.isclose(model.betas[0], sm_model.params, atol=tol)
+    np.isclose(model.p_values[0], sm_model.pvalues, atol=tol)
+    np.isclose(model.std_error_betas[0], sm_model.bse, atol=tol)
+    np.isclose(model.z_stat_betas[0], sm_model.tvalues, atol=tol)
+    np.isclose(preds, sm_preds, atol=tol)
