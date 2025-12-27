@@ -46,3 +46,21 @@ Issues = "https://github.com/adammotzel/pyglms/issues"
 [tool.isort]
 multi_line_output = 3
 include_trailing_comma = true
+
+[tool.pytest.ini_options]
+addopts = "-v --cov-report=term-missing"
+testpaths = ["turtles"]
+python_files = ["test_*.py"]
+filterwarnings = [
+    "ignore::RuntimeWarning",
+    "ignore::DeprecationWarning",
+]
+
+[tool.coverage.run]
+source = ["turtles"]
+branch = true
+
+[tool.coverage.report]
+omit = [
+    "*/test_*.py",
+]
