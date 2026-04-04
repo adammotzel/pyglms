@@ -29,4 +29,4 @@ jobs:
         uv pip install .[dev] --system 
 
     - name: Execute unit tests
-      run: pytest --cov-fail-under=80
+      run: uv run pytest --cov-fail-under=80
