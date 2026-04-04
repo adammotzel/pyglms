@@ -6,8 +6,6 @@ the model coefficients using Ordinary Least Squares (OLS), which
 is pure linear algebra and does not require optimization.
 """
 
-from typing import List, Optional
-
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
@@ -45,7 +43,7 @@ class MLR:
 
     Attributes
     ----------
-    variable_names : List[str]
+    variable_names : list[str]
         List of variable names passed during model fit.
     observations : int
         Number of observations in the design matrix.
@@ -239,7 +237,7 @@ class MLR:
         if not self._fitted:
             raise Warning("Please fit the model before calling this method/property.")
 
-    def fit(self, X: np.ndarray, y: np.ndarray, var_names: Optional[List[str]] = []):
+    def fit(self, X: np.ndarray, y: np.ndarray, var_names: list[str] | None = []):
         """
         Fit a Multiple Linear Regression model.
 
@@ -253,7 +251,7 @@ class MLR:
             is added during model fit.
         y : np.ndarray, shape (M, 1)
             True target values, where M is the number of samples.
-        var_names : Optional[List[Union[str, None]]]
+        var_names : list[str] | None
             Optional list of variable names. List must be in the same order that
             the variables appear in the design matrix. 'Intercept' should not
             be included in the list.
@@ -401,14 +399,14 @@ class MLR:
         }
         return pd.DataFrame(stats).round(4)
 
-    def plot_residuals_hist(self, bins: Optional[int] = 20):  # pragma: no cover
+    def plot_residuals_hist(self, bins: int = 20):  # pragma: no cover
         """
         A simple histogram plot of the residuals. Useful for checking
         the Normality assumption.
 
         Parameters
         ----------
-        bins : Optional[int]
+        bins : int
             The number of bins to use for the histogram. Default is 20.
 
         Returns
@@ -428,8 +426,8 @@ class MLR:
     def plot_residuals_vs_ind(
         self,
         x: np.ndarray,
-        title: Optional[str] = "Residuals vs. Independent",
-        xlabel: Optional[str] = "Independent",
+        title: str = "Residuals vs. Independent",
+        xlabel: str = "Independent",
     ):  # pragma: no cover
         """
         Plot standardized residuals against an independent variable.
@@ -439,9 +437,9 @@ class MLR:
         ----------
         x : np.ndarray
             Independent variable.
-        title : Optional[str]
+        title : str
             Plot title. Defaults to 'Residuals vs. Independent'.
-        xlabel : Optional[str]
+        xlabel : str
             Plot label for x-axis. Defaults to 'Independent'.
 
         Returns
@@ -459,8 +457,8 @@ class MLR:
 
     def plot_residuals_vs_fitted(
         self,
-        title: Optional[str] = "Residuals vs. Fitted Values",
-        xlabel: Optional[str] = "Fitted Values",
+        title: str = "Residuals vs. Fitted Values",
+        xlabel: str = "Fitted Values",
     ):  # pragma: no cover
         """
         Plot standardized residuals against fitted values. Useful for checking
@@ -468,9 +466,9 @@ class MLR:
 
         Parameters
         ----------
-        title : Optional[str]
+        title : str
             Plot title. Defaults to 'Residuals vs. Fitted Values'.
-        xlabel : Optional[str]
+        xlabel : str
             Plot label for x-axis. Defaults to 'Fitted Values'.
 
         Returns

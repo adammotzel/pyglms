@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "turtles-glms"
-version = "1.0.1"
+version = "1.1.0"
 requires-python = ">= 3.10"
 dependencies = [
     "numpy>=2.0.2",
@@ -37,7 +37,7 @@ dev = [
 
 [tool.setuptools.packages.find]
 where = ["."]
-exclude = ["tests", "*tests*", "examples", "scripts"]
+exclude = ["tests", "examples", "scripts"]
 
 [project.urls]
 Homepage = "https://github.com/adammotzel/pyglms"
@@ -49,8 +49,6 @@ include_trailing_comma = true
 
 [tool.pytest.ini_options]
 addopts = "-v --cov-report=term-missing"
-testpaths = ["turtles"]
-python_files = ["test_*.py"]
 filterwarnings = [
     "ignore::RuntimeWarning",
     "ignore::DeprecationWarning",
@@ -59,8 +57,3 @@ filterwarnings = [
 [tool.coverage.run]
 source = ["turtles"]
 branch = true
-
-[tool.coverage.report]
-omit = [
-    "*/test_*.py",
-]

@@ -5,7 +5,7 @@ Unit tests for functions from the preprocess module.
 import numpy as np
 import pandas as pd
 
-from ...preprocess import one_hot_encode
+from turtles.preprocess import one_hot_encode
 
 
 def test_one_hot_encode_basic():

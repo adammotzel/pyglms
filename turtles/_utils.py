@@ -1,8 +1,10 @@
 """
 General utility functions.
+
+All function can be used, but are generally intented for internal use.
 """
 
-from typing import Any, Dict, Tuple, Union
+from typing import Any
 
 import numpy as np
 
@@ -32,13 +34,13 @@ def _shape_check(x: np.ndarray, var_name: str, dim: int = 1):
         raise ValueError(f"'{var_name}' must contain more than {dim} dimensions.")
 
 
-def _validate_args(map: Dict[str, Tuple[Any, Union[type, Tuple[type, ...]]]]):
+def _validate_args(map: dict[str, tuple[Any, type | tuple[type, ...]]]):
     """
     Simple type validation of a set of input arguments.
 
     Parameters
     ----------
-    map : Dict[str, Tuple[Any, Union[type, Tuple[type, ...]]]]
+    map : dict[str, Tuple[Any, Union[type, Tuple[type, ...]]]]
         A dictionary where keys are the argument names and the values are
         tuples containing:
         - the object to check
