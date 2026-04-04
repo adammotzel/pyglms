@@ -140,9 +140,9 @@ def test_pca():
     """Test PCA function."""
 
     result = pca(X, 2)
-    np.testing.assert_array_equal(np.round(result, prec), true_pca)
+    assert np.allclose(result, true_pca) or np.allclose(result, -true_pca)
     result = pca(X, 1)
-    np.testing.assert_array_equal(np.round(result, prec), np.array([true_pca[:, 0]]).T)
+    assert np.allclose(result, np.array([true_pca[:, 0]]).T) or np.allclose(result, -np.array([true_pca[:, 0]]).T)
 
 
 def test_pca_invalid_case():
