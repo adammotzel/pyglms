@@ -97,16 +97,16 @@ true_xc = np.array(
 
 true_pca = np.array(
     [
-        [0.52815728, 0.01296752],
-        [0.51977265, -0.36291602],
-        [0.45010573, -0.29370424],
-        [0.31284923, 0.53863973],
-        [-0.39957495, 0.2567244],
-        [-0.36262502, 0.15644358],
-        [-0.30559432, -0.3182399],
-        [-0.70545412, -0.0749282],
-        [0.11838191, 0.61200282],
-        [-0.15601838, -0.5269897],
+        [-0.52815728, -0.01296752],
+        [-0.51977265, 0.36291602],
+        [-0.45010573, 0.29370424],
+        [-0.31284923, -0.53863973],
+        [0.39957495, -0.2567244],
+        [0.36262502, -0.15644358],
+        [0.30559432, 0.3182399],
+        [0.70545412, 0.0749282],
+        [-0.11838191, -0.61200282],
+        [0.15601838, 0.5269897],
     ]
 )
 
@@ -140,9 +140,9 @@ def test_pca():
     """Test PCA function."""
 
     result = pca(X, 2)
-    assert np.allclose(result, true_pca) or np.allclose(result, -true_pca)
+    np.testing.assert_array_equal(np.round(result, prec), true_pca)
     result = pca(X, 1)
-    assert np.allclose(result, np.array([true_pca[:, 0]]).T) or np.allclose(result, -np.array([true_pca[:, 0]]).T)
+    np.testing.assert_array_equal(np.round(result, prec), np.array([true_pca[:, 0]]).T)
 
 
 def test_pca_invalid_case():

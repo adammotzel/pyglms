@@ -235,6 +235,14 @@ def pca(X: np.ndarray, p: int) -> np.ndarray:
     s = s.real
     s = np.reshape(s, (p, 1))
     w = w.real
+
+    # enforce deterministic sign
+    for i in range(w.shape[1]):
+        col = w[:, i]
+        idx = np.argmax(np.abs(col))
+        if col[idx] < 0:
+            w[:, i] *= -1
+
     pca = w.T @ X_c
 
     return pca.T
