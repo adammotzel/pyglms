@@ -5,7 +5,7 @@ Unit tests for functions from the _utils module.
 import numpy as np
 import pytest
 
-from .._utils import _add_intercept, _shape_check, _validate_args
+from turtles._utils import _add_intercept, _shape_check, _validate_args
 
 # ----- _validate_args() -----
 

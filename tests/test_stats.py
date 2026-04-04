@@ -5,7 +5,7 @@ Unit tests for functions from the stats module.
 import numpy as np
 import pytest
 
-from ...stats import (
+from turtles.stats import (
     calculate_errors,
     covariance_matrix,
     pca,

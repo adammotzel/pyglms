@@ -65,7 +65,7 @@ described above.
 """
 
 import warnings
-from typing import List, Literal, Optional, Tuple
+from typing import Literal
 
 import numpy as np
 import pandas as pd
@@ -84,6 +84,32 @@ class GLM:
 
     Class Attributes and Methods are described in each child class
     implementation.
+
+    Parameters
+    ----------
+    max_iter : int | None, default=1000
+        The maximum number of iterations for the fitting algorithm.
+    learning_rate : float | None, default=0.1
+        The learning rate (step size) used to update the model parameters
+        during the fitting algorithm. Only applicable for `grad` and `newton`.
+    tolerance : float, default=0.000001
+        The tolerance for stopping the fitting algorithm when the change in
+        model parameters is below this value. Only applicable for `grad`
+        and `newton`.
+    beta_momentum : float, default=0.9
+        Momentum hyperparameter for the gradient descent update. Only used
+        and required when method = 'grad'. A value of 0 is equivalent to
+        standard gradient descent.
+    method : Literal['newton', 'grad', 'lbfgs'], default 'lbfgs'.
+        Optimization method for fitting the model. Currently supported algorithms
+        are:
+            - `grad`: Gradient Descent (first-order). Requires hyperparameter
+                tuning (`learning_rate`, `tolerance`, `beta_momentum`, `max_iter`).
+            - `newton`: Newton's Method (second-order). Requires hyperparameter
+                tuning (`learning_rate`, `tolerance`, `max_iter`).
+            - `lbfgs`: Low-memory Broyden-Fletcher-Goldfarb-Shanno algorithm
+                (quasi-Newton). Does not require hyperparameter tuning; only uses
+                `max_iter`.
     """
 
     def __init__(
@@ -94,35 +120,6 @@ class GLM:
         beta_momentum: float = 0.9,
         method: Literal["newton", "grad", "lbfgs"] = "lbfgs",
     ):
-        """
-        Initialize the GLM with the specified hyperparameters.
-
-        Parameters
-        ----------
-        max_iter : Optional[int], default=1000
-            The maximum number of iterations for the fitting algorithm.
-        learning_rate : Optional[float], default=0.1
-            The learning rate (step size) used to update the model parameters
-            during the fitting algorithm. Only applicable for `grad` and `newton`.
-        tolerance : float, default=0.000001
-            The tolerance for stopping the fitting algorithm when the change in
-            model parameters is below this value. Only applicable for `grad`
-            and `newton`.
-        beta_momentum : float, default=0.9
-            Momentum hyperparameter for the gradient descent update. Only used
-            and required when method = 'grad'. A value of 0 is equivalent to
-            standard gradient descent.
-        method : Literal['newton', 'grad', 'lbfgs'], default 'lbfgs'.
-            Optimization method for fitting the model. Currently supported algorithms
-            are:
-                - `grad`: Gradient Descent (first-order). Requires hyperparameter
-                  tuning (`learning_rate`, `tolerance`, `beta_momentum`, `max_iter`).
-                - `newton`: Newton's Method (second-order). Requires hyperparameter
-                  tuning (`learning_rate`, `tolerance`, `max_iter`).
-                - `lbfgs`: Low-memory Broyden-Fletcher-Goldfarb-Shanno algorithm
-                  (quasi-Newton). Does not require hyperparameter tuning; only uses
-                  `max_iter`.
-        """
 
         _validate_args(
             {
@@ -236,7 +233,7 @@ class GLM:
         return self._critical_z
 
     @property
-    def confidence_interval(self) -> Tuple[np.ndarray, np.ndarray]:
+    def confidence_interval(self) -> tuple[np.ndarray, np.ndarray]:
         self._is_fit()
         return self._confidence_interval
 
@@ -358,7 +355,7 @@ class GLM:
                 is the number of features.
             y : np.ndarray, shape (M, 1)
                 The true target values for each sample in the dataset.
-            exposure : Optional[np.ndarray], shape (M, 1)
+            exposure : np.ndarray | None, shape (M, 1)
                 The exposure values for each sample. Only applicable for GLMs
                 that use exposure.
 
@@ -388,7 +385,7 @@ class GLM:
                 N is the number of features.
             y : np.ndarray, shape (M, 1)
                 The true target values for each sample in the dataset.
-            exposure : Optional[np.ndarray], shape (M, 1)
+            exposure : np.ndarray | None, shape (M, 1)
                 The exposure values for each sample. Only applicable for GLMs
                 that use exposure.
 
@@ -428,7 +425,7 @@ class GLM:
                 number of features.
             y : np.ndarray, shape (M, 1)
                 The true target values for each sample in the dataset.
-            exposure : Optional[np.ndarray], shape (M, 1)
+            exposure : np.ndarray | None, shape (M, 1)
                 The exposure values for each sample. Only applicable for GLMs
                 that use exposure.
 
@@ -581,8 +578,8 @@ class GLM:
         self,
         X: np.ndarray,
         y: np.ndarray,
-        exposure: Optional[np.ndarray] = None,
-        var_names: Optional[List[str]] = [],
+        exposure: np.ndarray | None = None,
+        var_names: list[str] | None = [],
     ):
         """
         Fit the model using the optimization 'method' specified during class
@@ -595,12 +592,12 @@ class GLM:
             is the number of features. This should not include the intercept.
         y : np.ndarray, shape (M, 1)
             The true target values for each sample in the dataset.
-        exposure : Optional[np.ndarray], shape (M, 1)
+        exposure : np.ndarray | None, shape (M, 1)
             The exposure values for each sample. These represent the varying
             exposure times, population sizes, or different rates of observation,
             which are used to scale the predicted values. It is a vector of size
             M containing the exposure values. Not applicable for all GLMs.
-        var_names : Optional[List[Union[str, None]]]
+        var_names : list[str] | None
             Optional list of variable names. List must be in the same order that
             the variables appear in the design matrix. 'Intercept' should not
             be included in the list.

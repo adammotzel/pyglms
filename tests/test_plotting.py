@@ -6,7 +6,7 @@ from unittest.mock import patch
 
 import numpy as np
 
-from ...plotting import plot_y_vs_x
+from turtles.plotting import plot_y_vs_x
 
 
 def test_plot_valid_inputs():

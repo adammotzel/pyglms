@@ -2,8 +2,6 @@
 Functions to support preprocessing/transformations.
 """
 
-from typing import List, Tuple, Union
-
 import numpy as np
 import pandas as pd
 
@@ -12,10 +10,10 @@ from .._utils import _validate_args
 
 def one_hot_encode(
     df: pd.DataFrame,
-    columns: List[str],
+    columns: list[str],
     drop_first: bool = True,
     return_df: bool = True,
-) -> Union[pd.DataFrame, Tuple[np.ndarray, List[str]]]:
+) -> pd.DataFrame | tuple[np.ndarray, list[str]]:
     """
     One Hot Encode categorical variables in a Pandas DataFrame, also known
     as dummy variables or indicator variables.
@@ -30,7 +28,7 @@ def one_hot_encode(
     ----------
     df : pd.DataFrame, shape (M, N)
         Pandas DataFrame containing data to be encoded.
-    columns : List[str]
+    columns : list[str]
         List of column names in `df` to be encoded. Column values must be
         strings or categorical.
     drop_first : bool, default True
@@ -39,17 +37,17 @@ def one_hot_encode(
         category will then be treated as the 'base case' or 'reference category'
         for model coefficient interpretation.
     return_df : bool, default True
-        Optionally return a pandas DataFrame. If False, a Tuple of a numpy
+        Optionally return a pandas DataFrame. If False, a tuple of a numpy
         matrix and resulting column names is returned.
 
     Returns
     -------
-    Union[pd.DataFrame, Tuple[np.ndarray, List[str]]]
+    pd.DataFrame | tuple[np.ndarray, list[str]]
 
         If `return_df` = True, a pandas DataFrame is returned, containing the
         encoded columns.
 
-        If `return_df` = False, a Tuple is returned, where the new matrix is
+        If `return_df` = False, a tuple is returned, where the new matrix is
         in position [0] and the list of new column names in position [1].
     """
 

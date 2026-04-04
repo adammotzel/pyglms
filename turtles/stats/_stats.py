@@ -2,8 +2,6 @@
 Various statistical functions.
 """
 
-from typing import Dict, List, Optional, Tuple
-
 import numpy as np
 import pandas as pd
 from scipy.sparse.linalg import eigs
@@ -13,8 +11,8 @@ from .._utils import _add_intercept, _shape_check, _validate_args
 
 
 def calculate_errors(
-    y_true: np.ndarray, y_pred: np.ndarray, m: Optional[int] = None
-) -> Dict[str, float]:
+    y_true: np.ndarray, y_pred: np.ndarray, m: int | None = None
+) -> dict[str, float]:
     """
     Calculate errors for arrays containing continuous values. Not suitable
     for classification cases.
@@ -37,7 +35,7 @@ def calculate_errors(
 
     Returns
     -------
-    Dict[str, float]
+    dict[str, float]
         Dictionary where {key:value} is {"error name": value}.
     """
 
@@ -62,7 +60,7 @@ def calculate_errors(
 
 
 def variance_inflation_factor(
-    X: np.ndarray, var_names: Optional[List[str]] = None
+    X: np.ndarray, var_names: list[str] | None = None
 ) -> pd.DataFrame:
     """
     Calculate Variance Inflation Factor (VIF) for all predictors in the
@@ -76,7 +74,7 @@ def variance_inflation_factor(
     ----------
     X : np.ndarray, shape (m, n)
         Design matrix. Should not include an intercept.
-    var_names : Optional[List[str]]
+    var_names : list[str] | None
         Variable names. If not passed, defaults to `x_i` where `i` is the order
         of the dimension in the input matrix. Names must appear in the order
         that they do in the input matrix.
@@ -132,7 +130,7 @@ def variance_inflation_factor(
 def pearson_corr(
     x: np.ndarray,
     y: np.ndarray,
-) -> Tuple[float, float]:
+) -> tuple[float, float]:
     """
     Calculate the Pearson Correlation Coefficient.
 
@@ -149,7 +147,7 @@ def pearson_corr(
 
     Returns
     -------
-    Tuple[float, float]
+    tuple[float, float]
         Tuple containing the correlation coefficient in position [0],
         and the p-value in position [1].
     """

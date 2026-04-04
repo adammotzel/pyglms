@@ -4,7 +4,7 @@ Unit tests for GLM validation.
 
 import pytest
 
-from .._base import GLM
+from turtles.stats.glms._base import GLM
 
 
 def test_failures():
