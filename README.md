@@ -5,7 +5,7 @@
  ![PyPI](https://img.shields.io/pypi/v/turtles-glms.svg)
 
 
-# PyGLMs (Turtles) 🐢
+# PyGLMs (`turtles-glms` 🐢)
 
 An implementation of various Generalized Linear Models (GLMs), written in Python.
 
@@ -14,7 +14,7 @@ I created this package as a refresher on GLMs and the underlying optimization te
 
 ## Overview
 
-The code is packaged as a Python library named `turtles` ([I like turtles](https://www.youtube.com/watch?v=CMNry4PE93Y)), making the code easy to integrate into your own projects.
+The code is packaged as a Python library named `turtles-glms` ([I like turtles](https://www.youtube.com/watch?v=CMNry4PE93Y)).
 
 The package is written using `numpy` for linear algebra operations, `scipy` for (some) optimization, `pandas` for displaying tabular results, and `matplotlib` for plots.
 
@@ -41,14 +41,14 @@ See `examples/` in the [GitHub repo](https://github.com/adammotzel/pyglms) for e
 
 ### Fitting GLMs
 
-You can fit GLMs by instantiating a GLM class and calling its `fit()` method.
+You can fit GLMs by instantiating a GLM child class and calling its `fit()` method.
 
 ```python
 model = PoissonReg(
     method="newton",
     learning_rate=0.01
 )
-n_model.fit(
+model.fit(
     X=X, 
     y=y, 
     exposure=exposure
@@ -63,20 +63,14 @@ A few important notes about fitting `turtles` GLMs:
 
 ## Contributing
 
-To run (and edit) this project locally, clone the repo and create your virtual environment from project root using your global (or local) Python version. This project requires Python 3.10+.
+Clone the repo and create your virtual environment from project root. This project requires Python 3.10+.
 
 ```bash
-python -m venv
+uv venv --python 3.10
+source .venv/Scripts/activate || source .venv/bin/activate
+uv sync --all-extras
+pre-commit install
 ```
-
-Activate the env (`source .venv/Scripts/activate` for Windows OS, `source .venv/bin/activate` for Linux) and install dependencies:
-
-```bash
-pip install -e .[dev]
-```
-
-Optionally, you can execute `scripts/env.sh` to create and activate a virtual environment using `uv`. The `uv` package manager must be installed for this to work.
-
 
 ### Adding GLMs
 
