@@ -93,7 +93,13 @@ class LogReg(GLM):
         Generate a model summary table.
     """
 
-    def _objective_func(self, betas: np.ndarray, X: np.ndarray, y: np.ndarray) -> float:
+    def _objective_func(
+        self,
+        betas: np.ndarray,
+        X: np.ndarray,
+        y: np.ndarray,
+        exposure: np.ndarray | None = None,
+    ) -> float:
         """
         Compute the negative log-likelihood for Logistic regression. This is
         the objective function we want to minimize in the scipy L-BFGS solver.
@@ -136,7 +142,13 @@ class LogReg(GLM):
         """
         return 1 / (1 + np.exp(-y))
 
-    def _grad_func(self, betas: np.ndarray, X: np.ndarray, y: np.ndarray) -> np.ndarray:
+    def _grad_func(
+        self,
+        betas: np.ndarray,
+        X: np.ndarray,
+        y: np.ndarray,
+        exposure: np.ndarray | None = None,
+    ) -> np.ndarray:
         """
         Compute the Gradient (first derivative) of the log-likelihood loss function
         with respect to the model parameters.

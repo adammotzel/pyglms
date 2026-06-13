@@ -203,12 +203,12 @@ class GLM:
         return self._iterations
 
     @property
-    def last_gradient(self) -> np.ndarray:
+    def last_gradient(self) -> np.ndarray | None:
         self._is_fit()
         return self._gradient
 
     @property
-    def last_velocity(self) -> np.ndarray:
+    def last_velocity(self) -> np.ndarray | None:
         self._is_fit()
         return self._velocity
 
@@ -240,7 +240,11 @@ class GLM:
     # ----- CHILD CLASS INSTANCE METHODS -----
 
     def _objective_func(
-        self, betas: np.ndarray, X: np.ndarray, y: np.ndarray
+        self,
+        betas: np.ndarray,
+        X: np.ndarray,
+        y: np.ndarray,
+        exposure: np.ndarray | None = None,
     ) -> float:  # pragma: no cover
         """
         Compute the negative log-likelihood for the GLM. This is the objective
@@ -254,7 +258,7 @@ class GLM:
 
         This instance method must be implemented in the child class.
         """
-        pass
+        raise NotImplementedError("This method must be set by a child class.")
 
     def _link_func(self, y: np.ndarray) -> np.ndarray:  # pragma: no cover
         """
@@ -262,10 +266,14 @@ class GLM:
 
         This instance method must be implemented in the child class.
         """
-        pass
+        raise NotImplementedError("This method must be set by a child class.")
 
     def _grad_func(
-        self, betas: np.ndarray, X: np.ndarray, y: np.ndarray
+        self,
+        betas: np.ndarray,
+        X: np.ndarray,
+        y: np.ndarray,
+        exposure: np.ndarray | None = None,
     ) -> np.ndarray:  # pragma: no cover
         """
         Gradient calculation function for the GLM child class (i.e., the first
@@ -279,7 +287,7 @@ class GLM:
 
         This instance method must be implemented in the child class.
         """
-        pass
+        raise NotImplementedError("This method must be set by a child class.")
 
     def _hess_func(self, X: np.ndarray) -> np.ndarray:  # pragma: no cover
         """
@@ -288,7 +296,7 @@ class GLM:
 
         This instance method must be implemented in the child class.
         """
-        pass
+        raise NotImplementedError("This method must be set by a child class.")
 
     # ----- IMPLEMENTED INSTANCE METHODS -----
 
@@ -366,10 +374,13 @@ class GLM:
         # send kwargs to child class _grad_func(), which may
         # contain varying parameters
         self._gradient = self._grad_func(self._betas, **kwargs)
+
+        # self._velocity won't ever be None because of earlier checks
         self._velocity = (
-            self.beta_momentum * self._velocity
+            self.beta_momentum * self._velocity  # ty: ignore[unsupported-operator]
             + (1 - self.beta_momentum) * self._gradient
         )
+
         self._betas -= self.learning_rate * self._velocity
 
     def _newtons_method(self, **kwargs):
@@ -436,7 +447,13 @@ class GLM:
 
         # set up args so we include the correct arguments
         X = kwargs.get("X")
-        y = kwargs.get("y").flatten()
+        y = kwargs.get("y")
+
+        if X is not None and y is not None:
+            y = y.flatten()
+        else:
+            raise ValueError("X and y must be present in kwargs argument")
+
         exposure = kwargs.get("exposure", None)
         args = (X, y, exposure.flatten()) if exposure is not None else (X, y)
 
@@ -497,7 +514,7 @@ class GLM:
             prev_betas = self._betas.copy()
 
             # perform algo to update betas
-            update_betas(**kwargs)
+            update_betas(**kwargs)  # ty: ignore[call-non-callable]
 
             # strict convergence check
             if (

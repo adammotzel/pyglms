@@ -158,7 +158,10 @@ def pearson_corr(
     return (result.statistic.item(), result.pvalue.item())
 
 
-def covariance_matrix(X: np.ndarray, return_xc=False) -> np.ndarray:
+def covariance_matrix(
+    X: np.ndarray,
+    return_xc=False,
+) -> np.ndarray | tuple[np.ndarray, np.ndarray]:
     """
     Calculate the covariance between variables in a matrix.
 

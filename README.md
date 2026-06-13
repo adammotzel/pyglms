@@ -5,11 +5,11 @@
  ![PyPI](https://img.shields.io/pypi/v/turtles-glms.svg)
 
 
-# PyGLMs (`turtles-glms` 🐢)
+# PyGLMs
 
 An implementation of various Generalized Linear Models (GLMs), written in Python.
 
-I created this package as a refresher on GLMs and the underlying optimization techniques. It's intended as a learning tool and a reference for building and understanding these models from the ground up.
+I created this package as a personal refresher on GLMs and the underlying optimization techniques. It's intended as a learning tool and a reference for building and understanding these models from the ground up.
 
 
 ## Overview
@@ -26,7 +26,7 @@ The following models have been implemented:
 
 The `GLM` parent class supports three optimization methods for parameter estimation: Momentum-based Gradient Descent for first-order optimization, Newton's Method for second-order optimization, and Limited-memory Broyden–Fletcher–Goldfarb–Shanno (L-BFGS). The user can specify the desired optimization `method` during class instantiation.
 
-Momentum-based Gradient Descent and Newton's Method are implemented in Python as part of the `turtles` distribution. L-BFGS is implemented using `scipy.optimize`; it's a quasi-Newton method that approximates the Hessian (instead of fully computing it, like Newton's Method), so it's quite fast.
+Momentum-based Gradient Descent and Newton's Method are implemented in Python as part of the code base. L-BFGS is implemented using `scipy.optimize`; it's a quasi-Newton method that approximates the Hessian (instead of fully computing it, like Newton's Method), so it's quite fast.
 
 
 ## Usage
@@ -66,7 +66,7 @@ A few important notes about fitting `turtles` GLMs:
 Clone the repo and create your virtual environment from project root. This project requires Python 3.10+.
 
 ```bash
-uv venv --python 3.10
+uv venv
 source .venv/Scripts/activate || source .venv/bin/activate
 uv sync --all-extras
 pre-commit install
@@ -74,8 +74,16 @@ pre-commit install
 
 ### Adding GLMs
 
-To add more GLM classes, use the `GLM` parent class for inheritence (see `PoissonReg` and `LogReg` as examples). The GLM parent class provides a solid framework for implementing new child classes and should be used whenever possible. Unimplemented GLMs include Negative Binomial, Gamma, and Tweedie.
+To add a new GLM class, inherit from the `GLM` parent class (see `PoissonReg` and `LogReg` for examples). The `GLM` parent class provides a framework for implementing new models and should be used whenever possible. Planned but currently unimplemented GLMs include Negative Binomial, Gamma, and Tweedie.
 
+The `GLM` parent class defines several empty instance methods that are intended to be overridden by child classes:
+
+1. `self._objective_func`: The objective function to be minimized.
+2. `self._link_func`: The GLM's link function (e.g., the logit link for Logistic Regression).
+3. `self._grad_func`: The first derivative of the loss function, used by some optimization algorithms.
+4. `self._hess_func`: The second derivative of the loss function, used by some optimization algorithms.
+
+The implementations in the existing child classes are intentionally written for clarity to help readers and developers understand the underlying mathematics. This design also makes implementing new GLMs pretty straightforward.
 
 ## Testing
 
