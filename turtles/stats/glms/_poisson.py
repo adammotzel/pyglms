@@ -119,7 +119,11 @@ class PoissonReg(GLM):
         return self._dispersion
 
     def _objective_func(
-        self, betas: np.ndarray, X: np.ndarray, y: np.ndarray, exposure: np.ndarray
+        self,
+        betas: np.ndarray,
+        X: np.ndarray,
+        y: np.ndarray,
+        exposure: np.ndarray | None = None,
     ) -> float:
         """
         Compute the negative log-likelihood for Poisson regression. This is the
@@ -171,7 +175,11 @@ class PoissonReg(GLM):
         return np.exp(y)
 
     def _grad_func(
-        self, betas: np.ndarray, X: np.ndarray, y: np.ndarray, exposure: np.ndarray
+        self,
+        betas: np.ndarray,
+        X: np.ndarray,
+        y: np.ndarray,
+        exposure: np.ndarray | None = None,
     ) -> np.ndarray:
         """
         Compute the Gradient (first derivative) of the loss function with respect
