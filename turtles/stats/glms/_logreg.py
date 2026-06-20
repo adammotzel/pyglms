@@ -3,8 +3,12 @@ Logistic Regression.
 """
 
 import numpy as np
+from scipy.special import expit
 
 from ._base import GLM
+
+_eps = 1e-12
+_eps_max = 1 - _eps
 
 
 class LogReg(GLM):
@@ -31,7 +35,7 @@ class LogReg(GLM):
     ----------
     max_iter : Optional[int], default=1000
         The maximum number of iterations for the fitting algorithm.
-    learning_rate : Optional[float], default=0.01
+    learning_rate : Optional[float], default=0.1
         The learning rate (step size) used to update the model parameters during
         the fitting algorithm. Only applicable for `grad` and `newton`.
     tolerance : float, default=0.001
@@ -47,7 +51,8 @@ class LogReg(GLM):
             - `grad`: Gradient Descent (first-order). Requires hyperparameter
               tuning (`learning_rate`, `tolerance`, `beta_momentum`, `max_iter`).
             - `newton`: Newton's Method (second-order). Requires hyperparameter
-              tuning (`learning_rate`, `tolerance`, `max_iter`).
+              tuning (`tolerance`, `max_iter`). Learning rate is usually just
+              1.0 for Newton's, but there are exceptions.
             - `lbfgs`: Low-memory Broyden-Fletcher-Goldfarb-Shanno algorithm
               (quasi-Newton). Does not require hyperparameter tuning; only uses
               `max_iter`.
@@ -120,7 +125,11 @@ class LogReg(GLM):
         float
             The negative log-likelihood value.
         """
-        p = self._link_func(X @ betas.T)
+        p = np.clip(
+            self._link_func(X @ betas.T),
+            _eps,
+            _eps_max,
+        )
         return -np.sum(y * np.log(p) + (1 - y) * np.log(1 - p))
 
     def _link_func(self, y: np.ndarray) -> np.ndarray:
@@ -140,7 +149,8 @@ class LogReg(GLM):
             The output of the sigmoid function applied to the fitted values,
             where each element represents a probability.
         """
-        return 1 / (1 + np.exp(-y))
+        # sigmoid: 1 / (1 + np.exp(-y))
+        return expit(y)
 
     def _grad_func(
         self,
@@ -197,4 +207,4 @@ class LogReg(GLM):
             The Hessian matrix.
         """
         diag_elements = self._current_sigmoid * (1 - self._current_sigmoid)
-        return -X.T * diag_elements.flatten() @ X
+        return X.T * diag_elements.flatten() @ X

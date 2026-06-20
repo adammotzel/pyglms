@@ -106,7 +106,8 @@ class GLM:
             - `grad`: Gradient Descent (first-order). Requires hyperparameter
                 tuning (`learning_rate`, `tolerance`, `beta_momentum`, `max_iter`).
             - `newton`: Newton's Method (second-order). Requires hyperparameter
-                tuning (`learning_rate`, `tolerance`, `max_iter`).
+                tuning (`tolerance`, `max_iter`). Learning rate is usually just
+                1.0 for Newton's, but there are exceptions.
             - `lbfgs`: Low-memory Broyden-Fletcher-Goldfarb-Shanno algorithm
                 (quasi-Newton). Does not require hyperparameter tuning; only uses
                 `max_iter`.
@@ -138,7 +139,7 @@ class GLM:
             ("tolerance", tolerance),
             ("beta_momentum", beta_momentum),
         ]:
-            if args[0] == "tolerance" and (args[1] <= 0) and (args[1] >= 1):
+            if args[0] == "tolerance" and ((args[1] <= 0) or (args[1] >= 1)):
                 raise ValueError(
                     (
                         f"tolerance must be greater than 0 and less than 1. "
@@ -168,22 +169,18 @@ class GLM:
         self._velocity = None
         self._gradient = None
 
-        # set exposure using property
-        # this can be overwritten in child classes if exposure is applicable
-        self.has_exposure
+    # overwrite in child class if exposure is applicable
+    @property
+    def has_exposure(self) -> bool:
+        return False
 
     @property
-    def has_exposure(self):
-        self._has_exposure = False
-        return self._has_exposure
-
-    @property
-    def observations(self) -> float:
+    def observations(self) -> int:
         self._is_fit()
         return self._m
 
     @property
-    def dimensions(self) -> float:
+    def dimensions(self) -> int:
         self._is_fit()
         return self._n
 
@@ -198,7 +195,7 @@ class GLM:
         return self._betas
 
     @property
-    def iterations(self) -> float:
+    def iterations(self) -> int:
         self._is_fit()
         return self._iterations
 
@@ -314,7 +311,9 @@ class GLM:
             If the class instance has not been fit.
         """
         if not self._fitted:
-            raise Warning("Please fit the model before calling this method/property.")
+            raise RuntimeError(
+                "Please fit the model before calling this method/property."
+            )
 
     def _get_hessian_inv(self, H: np.ndarray) -> np.ndarray:
         """
@@ -407,7 +406,7 @@ class GLM:
         self._gradient = self._grad_func(self._betas, **kwargs)
         H = self._hess_func(kwargs["X"])
         H_inv = self._get_hessian_inv(H)
-        self._betas += self.learning_rate * self._gradient @ H_inv
+        self._betas -= self.learning_rate * self._gradient @ H_inv
 
     def _l_bfgs(self, **kwargs):
         """
@@ -596,7 +595,7 @@ class GLM:
         X: np.ndarray,
         y: np.ndarray,
         exposure: np.ndarray | None = None,
-        var_names: list[str] | None = [],
+        var_names: list[str] | None = None,
     ):
         """
         Fit the model using the optimization 'method' specified during class
@@ -634,7 +633,7 @@ class GLM:
             {
                 "X": (X, np.ndarray),
                 "y": (y, np.ndarray),
-                "var_names": (var_names, list),
+                "var_names": (var_names, (list, type(None))),
                 "exposure": (exposure, (np.ndarray, type(None))),
             }
         )
@@ -647,7 +646,7 @@ class GLM:
             )
 
         # set instance attributes
-        self.variable_names = var_names
+        self.variable_names = var_names or []
         self._dof = self._m - self._n - 1
 
         # initialize
@@ -659,7 +658,7 @@ class GLM:
 
         # deliver args for optimization; pass exposure, if needed
         package = {"X": X, "y": y}
-        if self._has_exposure:
+        if self.has_exposure:
             exposure = exposure if exposure is not None else np.ones_like(y)
             package["exposure"] = exposure
 
@@ -713,10 +712,12 @@ class GLM:
             4. z-statistic
             5. p-value
             6. [0.025 (confidence interval)
-            7. 0.075] (confidence interval)
+            7. 0.975] (confidence interval)
         """
 
         self._is_fit()
+
+        lower, upper = self._confidence_interval
 
         names = self.variable_names or [f"x{i}" for i in range(self._n)]
         stats = {
@@ -725,7 +726,7 @@ class GLM:
             "Std Error": self._std_error_betas[0],
             "z-statistic": self._z_stat_betas[0],
             "p-value": self._p_values[0],
-            "[0.025": self._confidence_interval[0][0],
-            "0.075]": self._confidence_interval[1][0],
+            "[0.025": lower.ravel(),
+            "0.975]": upper.ravel(),
         }
         return pd.DataFrame(stats).round(4)

@@ -15,7 +15,7 @@ class PoissonReg(GLM):
 
         1. Linearity:
             The log of the expected count is a linear combination of the
-        predictors.
+            predictors.
         2. Independence:
             The observations are independent of one another.
         3. Poisson Distribution:
@@ -37,7 +37,7 @@ class PoissonReg(GLM):
     learning_rate : Optional[float], default=0.01
         The learning rate (step size) used to update the model parameters during
         the fitting algorithm. Only applicable for `grad` and `newton`.
-    tolerance : float, default=0.001
+    tolerance : float, default=0.1
         The tolerance for stopping the fitting algorithm when the change in model
         parameters is below this value. Only applicable for `grad` and `newton`.
     beta_momentum : float, default=0.9
@@ -50,7 +50,8 @@ class PoissonReg(GLM):
             - `grad`: Gradient Descent (first-order). Requires hyperparameter
               tuning (`learning_rate`, `tolerance`, `beta_momentum`, `max_iter`).
             - `newton`: Newton's Method (second-order). Requires hyperparameter
-              tuning (`learning_rate`, `tolerance`, `max_iter`).
+              tuning (`tolerance`, `max_iter`). Learning rate is usually just
+              1.0 for Newton's, but there are exceptions.
             - `lbfgs`: Low-memory Broyden-Fletcher-Goldfarb-Shanno algorithm
               (quasi-Newton). Does not require hyperparameter tuning; only uses
               `max_iter`.
@@ -102,11 +103,10 @@ class PoissonReg(GLM):
         Generate a model summary table.
     """
 
-    # overwrite property to trigger exposure
+    # overwrite parent property to trigger exposure
     @property
     def has_exposure(self):
-        self._has_exposure = True
-        return self._has_exposure
+        return True
 
     @property
     def deviance(self) -> float:
@@ -233,7 +233,7 @@ class PoissonReg(GLM):
         np.ndarray, shape (N, N)
             The Hessian matrix.
         """
-        return -X.T * self._current_lambdas.flatten() @ X
+        return X.T * self._current_lambdas.flatten() @ X
 
     def _get_coef_stats(self, X: np.ndarray, y: np.ndarray):
         """

@@ -46,7 +46,8 @@ You can fit GLMs by instantiating a GLM child class and calling its `fit()` meth
 ```python
 model = PoissonReg(
     method="newton",
-    learning_rate=0.01
+    learning_rate=1.0,
+    tolerance=0.00001
 )
 model.fit(
     X=X, 
@@ -57,7 +58,7 @@ model.fit(
 
 A few important notes about fitting `turtles` GLMs:
 1. The `fit()` method parameters `X`, `y`, and (for Poisson) `exposure` must be `numpy` arrays. Parameters `y` and `exposure` must be of shape `(M, 1)`, where `M` is the number of rows in the data. The package does not support `pandas` or `polars` dataframes at this time. See class / instance method docstrings for exact requirements.
-2. Each GLM class has a `learning_rate` parameter, applicable to Gradient Descent and Newton's optimization methods. The learning rate (or step size) is a hyperparameter that controls the magnitude of parameter updates during the optimization process. If it's too large, the Hessian matrix may become singular, in which case the learning rate should be decreased. This is typically part of the tuning process.
+2. Each GLM class has a `learning_rate` parameter, applicable to Gradient Descent and Newton's optimization methods. The learning rate (or step size) is a hyperparameter that controls the magnitude of parameter updates during the optimization process. If it's too large, the Hessian matrix may become singular, in which case the learning rate should be decreased. This is typically part of the tuning process. (NOTE: learning rate is typically just 1.0 for Newton's method).
 3. There are currently no regularization methods implemented in the package. Future versions may include L1, L2, and Elastic Net methods.
 
 
@@ -98,3 +99,10 @@ pytest
 (like `MLR`) are ignored. Those class methods are essentially just wrappers around `matplotlib` 
 and `turtles.plotting` functions.
 - `GLM` class methods that are meant to be implemented by child classes are ignored.
+
+## Unreleased
+
+Some future updates I'd like to make:
+1. Support flattened arrays (in addition to (m, 1))
+2. Tweedie GLM
+3. Regularization methods
