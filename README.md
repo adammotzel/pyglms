@@ -8,7 +8,7 @@
 
 An implementation of various Generalized Linear Models (GLMs), written in Python.
 
-GLMs are an excellent foundation for predictive modeling and machine learning, so the code is intentionally written for clarity, to help other readers and developers understand the underlying mathematics. Building this package also served as my own personal refresher on the topic.
+GLMs are an excellent foundation for predictive modeling and machine learning, so the code is intentionally written for clarity to help other readers and developers understand the underlying mathematics. Building this package also served as my own personal refresher on the topic.
 
 ## Overview
 

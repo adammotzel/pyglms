@@ -1,11 +1,10 @@
 # Contributing
 
-Clone the repo and create your virtual environment from project root. This project requires Python 3.10+.
+Clone the repo and create your virtual environment from project root. This project requires `uv` and Python 3.10+.
 
 ```bash
-uv venv
-source .venv/Scripts/activate || source .venv/bin/activate
 uv sync --all-extras
+source .venv/Scripts/activate || source .venv/bin/activate
 pre-commit install
 ```
 
